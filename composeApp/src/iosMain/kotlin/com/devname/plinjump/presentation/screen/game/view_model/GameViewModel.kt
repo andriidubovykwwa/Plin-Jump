@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devname.plinjump.domain.GameRepository
 import com.devname.plinjump.utils.GameConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,11 +14,25 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class GameViewModel : ViewModel() {
+class GameViewModel(
+    private val gameRepository: GameRepository
+) : ViewModel() {
     private val _state = MutableStateFlow(GameState())
     val state = _state.asStateFlow()
 
     private var prevTime by mutableStateOf(0L)
+
+
+    init {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    shields = gameRepository.getShields(),
+                    fireballs = gameRepository.getFireballs()
+                )
+            }
+        }
+    }
 
     fun onEvent(event: GameEvent) {
         when (event) {
@@ -34,16 +49,20 @@ class GameViewModel : ViewModel() {
     private fun processActivateShield() = viewModelScope.launch {
         if (!state.value.isGameActive) return@launch
         if (state.value.shields <= 0) return@launch
+        val newShields = state.value.shields - 1
+        gameRepository.setShields(newShields)
         _state.update {
-            it.copy(shields = it.shields - 1, shieldSeconds = GameConfig.SHIELD_SECONDS)
+            it.copy(shields = newShields, shieldSeconds = GameConfig.SHIELD_SECONDS)
         }
     }
 
     private fun processActivateFireball() = viewModelScope.launch {
         if (!state.value.isGameActive) return@launch
         if (state.value.fireballs <= 0) return@launch
+        val newFireballs = state.value.fireballs
+        gameRepository.setFireballs(newFireballs)
         _state.update {
-            it.copy(fireballs = it.fireballs - 1, fireballSeconds = GameConfig.FIREBALL_SECONDS)
+            it.copy(fireballs = newFireballs, fireballSeconds = GameConfig.FIREBALL_SECONDS)
         }
     }
 
@@ -71,7 +90,13 @@ class GameViewModel : ViewModel() {
 
     private fun processStartGame() = viewModelScope.launch {
         _state.update {
-            GameState(gameSize = it.gameSize, blockSize = it.blockSize, isGameActive = true)
+            GameState(
+                gameSize = it.gameSize,
+                blockSize = it.blockSize,
+                isGameActive = true,
+                shields = it.shields,
+                fireballs = it.fireballs
+            )
         }
     }
 
@@ -114,7 +139,7 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private fun handleObstaclesCollisions() {
+    private suspend fun handleObstaclesCollisions() {
         val blockSize = state.value.blockSize
         val playerY = state.value.playerY * state.value.gameSize.height
         val centerX = state.value.gameSize.width * 0.5f
@@ -184,9 +209,10 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private fun lose() {
-        // TODO: record result
-        // TODO: record coins
+    private suspend fun lose() {
+        gameRepository.processScore(state.value.score.toInt())
+        println("Add coins: ${state.value.coins}")
+        gameRepository.setCoins(gameRepository.getCoins() + state.value.coins)
         _state.update {
             it.copy(isGameActive = false, isPlayerCrushed = true)
         }
