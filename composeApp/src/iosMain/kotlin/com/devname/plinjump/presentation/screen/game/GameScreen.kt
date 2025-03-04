@@ -91,6 +91,17 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
             )
         }
         Column(
+            Modifier.align(Alignment.TopStart),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            Button(onClick = { onEvent(GameEvent.ActivateShield) }) {
+                Text("Shield (${state.shields})", fontSize = 14.sp)
+            }
+            Button(onClick = { onEvent(GameEvent.ActivateFireball) }) {
+                Text("Fireball (${state.fireballs})", fontSize = 14.sp)
+            }
+        }
+        Column(
             Modifier.align(Alignment.TopEnd),
             horizontalAlignment = Alignment.End,
         ) {

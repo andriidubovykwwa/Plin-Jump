@@ -26,6 +26,24 @@ class GameViewModel : ViewModel() {
             is GameEvent.StartGame -> processStartGame()
             is GameEvent.UpdateGame -> processUpdateGame(event.time)
             is GameEvent.SecondTick -> processSecondTick()
+            is GameEvent.ActivateFireball -> processActivateFireball()
+            is GameEvent.ActivateShield -> processActivateShield()
+        }
+    }
+
+    private fun processActivateShield() = viewModelScope.launch {
+        if (!state.value.isGameActive) return@launch
+        if (state.value.shields <= 0) return@launch
+        _state.update {
+            it.copy(shields = it.shields - 1, shieldSeconds = GameConfig.SHIELD_SECONDS)
+        }
+    }
+
+    private fun processActivateFireball() = viewModelScope.launch {
+        if (!state.value.isGameActive) return@launch
+        if (state.value.fireballs <= 0) return@launch
+        _state.update {
+            it.copy(fireballs = it.fireballs - 1, fireballSeconds = GameConfig.FIREBALL_SECONDS)
         }
     }
 
