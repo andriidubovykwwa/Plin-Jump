@@ -42,14 +42,7 @@ class GameViewModel : ViewModel() {
 
     private fun processStartGame() = viewModelScope.launch {
         _state.update {
-            it.copy(
-                isGameActive = true,
-                isPlayerCrushed = true,
-                isPlayerJumping = false,
-                playerY = 0f,
-                obstaclesX = emptyList(),
-                score = 0f
-            )
+            GameState(canvasSize = it.canvasSize, blockSize = it.blockSize, isGameActive = true)
         }
     }
 
@@ -62,8 +55,9 @@ class GameViewModel : ViewModel() {
 
         handleJumpUp(floatDelta)
         handleJumpDown(floatDelta)
-        handleObstacles(floatDelta)
-        handleCollisions()
+        handleObjects(floatDelta)
+        handleCoinsCollision()
+        handleObstaclesCollisions()
         handleScore(floatDelta)
     }
 
@@ -91,7 +85,7 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private fun handleCollisions() {
+    private fun handleObstaclesCollisions() {
         val blockSize = state.value.blockSize
         val playerY = state.value.playerY * state.value.canvasSize.height
         val centerX = state.value.canvasSize.width * 0.5f
@@ -113,32 +107,71 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    private fun handleCoinsCollision() {
+        val blockSize = state.value.blockSize
+        val playerY = state.value.playerY * state.value.canvasSize.height
+        val centerX = state.value.canvasSize.width * 0.5f
+
+        var collidedCoinX: Float? = null
+        state.value.coinsX.forEach {
+            if (collidedCoinX == null) {
+                val coinX = it * state.value.canvasSize.width
+                var isCollision = true
+                // Player is too high
+                if (playerY > blockSize) isCollision = false
+                // Player is in left from obstacle
+                if (centerX + blockSize / 2 < coinX) isCollision = false
+                // Player is in right from obstacle
+                if (centerX - blockSize / 2 > coinX + blockSize) isCollision = false
+
+                if (isCollision) collidedCoinX = it
+            }
+        }
+        if (collidedCoinX != null) {
+            _state.update {
+                it.copy(
+                    coinsX = it.coinsX.filter { x -> x != collidedCoinX },
+                    coins = it.coins + 1
+                )
+            }
+        }
+    }
+
     private fun lose() {
         // TODO: record result
+        // TODO: record coins
         _state.update {
             it.copy(isGameActive = false, isPlayerCrushed = true)
         }
     }
 
-    private fun handleObstacles(floatDelta: Float) {
+    private fun handleObjects(floatDelta: Float) {
         val moveSpeed = getActualObstacleMoveSpeed(floatDelta)
-        val destroyObstacleX = -0.15f
+        val destroyObjectX = -0.15f
         val maxObstacleStart = 1.8f
-        val minObstacleStart = 1.15f
+        val minObstacleStart = 1.4f
         val minObstacleDistance = 0.65f
         val maxObstacleDistance = 0.88f
+        val coinObstacleDistance = 0.3f
         val secondObstacleChance = 0.5f
 
         val updatedObstacles = state.value.obstaclesX
             .map { it - moveSpeed }
-            .filter { it > destroyObstacleX }
+            .filter { it > destroyObjectX }
+            .toMutableList()
+        val updatedCoins = state.value.coinsX
+            .map { it - moveSpeed }
+            .filter { it > destroyObjectX }
             .toMutableList()
 
         // If all obstacles are off-screen, spawn new ones
         if (updatedObstacles.isEmpty()) {
             val newObstacles = mutableListOf<Float>()
+            val newCoins = mutableListOf<Float>()
             val firstObstacleX =
                 Random.nextFloat() * (maxObstacleStart - minObstacleStart) + minObstacleStart
+            val firstCoinX = firstObstacleX - coinObstacleDistance
+            newCoins.add(firstCoinX)
             newObstacles.add(firstObstacleX)
 
             // Chance to spawn a second obstacle
@@ -147,12 +180,21 @@ class GameViewModel : ViewModel() {
                         Random.nextFloat() * (maxObstacleDistance - minObstacleDistance)
 
                 newObstacles.add(secondObstacleX)
-            }
 
+                val middleCoinX = (firstObstacleX + secondObstacleX) / 2
+                newCoins.add(middleCoinX)
+
+                val lastCoinX = secondObstacleX + coinObstacleDistance
+                newCoins.add(lastCoinX)
+            } else {
+                val lastCoinX = firstObstacleX + coinObstacleDistance
+                newCoins.add(lastCoinX)
+            }
+            updatedCoins.addAll(newCoins)
             updatedObstacles.addAll(newObstacles)
         }
 
-        _state.update { it.copy(obstaclesX = updatedObstacles) }
+        _state.update { it.copy(obstaclesX = updatedObstacles, coinsX = updatedCoins) }
     }
 
 

@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.devname.plinjump.presentation.component.CoinObjectGameComponent
 import com.devname.plinjump.presentation.component.MovingBackground
 import com.devname.plinjump.presentation.component.ObstacleGameComponent
 import com.devname.plinjump.presentation.component.PlayerBallGameComponent
@@ -73,9 +74,24 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
                 obstacleX = obstacleX
             )
         }
+        state.coinsX.forEach { coinX ->
+            CoinObjectGameComponent(
+                gameSize = state.canvasSize,
+                blockSize = state.blockSize,
+                coinX = coinX
+            )
+        }
         Text(
-            modifier = Modifier.align(Alignment.TopCenter),
+            modifier = Modifier.align(Alignment.TopStart),
             text = "Score: ${state.score.toInt()}",
+            color = Color.Black,
+            fontWeight = FontWeight.Bold,
+            fontStyle = FontStyle.Italic,
+            fontSize = 25.sp,
+        )
+        Text(
+            modifier = Modifier.align(Alignment.TopEnd),
+            text = "Coins: ${state.coins}",
             color = Color.Black,
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Italic,
