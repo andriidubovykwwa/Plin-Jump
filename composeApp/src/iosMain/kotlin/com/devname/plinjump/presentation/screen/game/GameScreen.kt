@@ -66,11 +66,13 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
             blockSize = state.blockSize,
             playerY = state.playerY
         )
-        ObstacleGameComponent(
-            gameSize = state.canvasSize,
-            blockSize = state.blockSize,
-            obstacleX = state.obstacleX
-        )
+        state.obstaclesX.forEach { obstacleX ->
+            ObstacleGameComponent(
+                gameSize = state.canvasSize,
+                blockSize = state.blockSize,
+                obstacleX = obstacleX
+            )
+        }
         Text(
             modifier = Modifier.align(Alignment.TopCenter),
             text = "Score: ${state.score.toInt()}",

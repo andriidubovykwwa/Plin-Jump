@@ -47,7 +47,7 @@ class GameViewModel : ViewModel() {
                 isPlayerCrushed = true,
                 isPlayerJumping = false,
                 playerY = 0f,
-                obstacleX = 2f,
+                obstaclesX = emptyList(),
                 score = 0f
             )
         }
@@ -94,17 +94,23 @@ class GameViewModel : ViewModel() {
     private fun handleCollisions() {
         val blockSize = state.value.blockSize
         val playerY = state.value.playerY * state.value.canvasSize.height
-        val obstacleX = state.value.obstacleX * state.value.canvasSize.width
         val centerX = state.value.canvasSize.width * 0.5f
-        // Player is too high
-        if (playerY > blockSize) return
-        // Player is in left from obstacle
-        if (centerX + blockSize / 2 < obstacleX) return
-        // Player is in right from obstacle
-        if (centerX - blockSize / 2 > obstacleX + blockSize) return
 
-        // Collision:
-        lose()
+        state.value.obstaclesX.forEach {
+            val obstacleX = it * state.value.canvasSize.width
+            var isCollision = true
+            // Player is too high
+            if (playerY > blockSize) isCollision = false
+            // Player is in left from obstacle
+            if (centerX + blockSize / 2 < obstacleX) isCollision = false
+            // Player is in right from obstacle
+            if (centerX - blockSize / 2 > obstacleX + blockSize) isCollision = false
+
+            if (isCollision) {
+                lose()
+                return
+            }
+        }
     }
 
     private fun lose() {
@@ -115,20 +121,40 @@ class GameViewModel : ViewModel() {
     }
 
     private fun handleObstacles(floatDelta: Float) {
-        val newX = state.value.obstacleX - getActualObstacleMoveSpeed(floatDelta)
+        val moveSpeed = getActualObstacleMoveSpeed(floatDelta)
+        val destroyObstacleX = -0.15f
         val maxObstacleStart = 1.8f
         val minObstacleStart = 1.15f
-        val destroyObstacleX = -0.15f
-        _state.update {
-            it.copy(
-                obstacleX = if (newX > destroyObstacleX) {
-                    newX
-                } else {
-                    Random.nextFloat() * (maxObstacleStart - minObstacleStart) + minObstacleStart
-                }
-            )
+        val minObstacleDistance = 0.65f
+        val maxObstacleDistance = 0.88f
+        val secondObstacleChance = 0.5f
+
+        val updatedObstacles = state.value.obstaclesX
+            .map { it - moveSpeed }
+            .filter { it > destroyObstacleX }
+            .toMutableList()
+
+        // If all obstacles are off-screen, spawn new ones
+        if (updatedObstacles.isEmpty()) {
+            val newObstacles = mutableListOf<Float>()
+            val firstObstacleX =
+                Random.nextFloat() * (maxObstacleStart - minObstacleStart) + minObstacleStart
+            newObstacles.add(firstObstacleX)
+
+            // Chance to spawn a second obstacle
+            if (Random.nextFloat() < secondObstacleChance) {
+                val secondObstacleX = firstObstacleX + minObstacleDistance +
+                        Random.nextFloat() * (maxObstacleDistance - minObstacleDistance)
+
+                newObstacles.add(secondObstacleX)
+            }
+
+            updatedObstacles.addAll(newObstacles)
         }
+
+        _state.update { it.copy(obstaclesX = updatedObstacles) }
     }
+
 
     private fun getActualObstacleMoveSpeed(floatDelta: Float): Float {
         val scoreSpeedMultiplier = 1f + state.value.score / GameConfig.SPEED_X2_SCORE_THRESHOLD
