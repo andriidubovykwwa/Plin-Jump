@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Plin Jump</string>
+    <string name="background">Background</string>
+    <string name="start">Start</string>
+    <string name="restart">Restart</string>
+    <string name="ball">Restart</string>
+    <string name="obstacle">Obstacle</string>
+    <string name="coin">Coin</string>
+</resources>
