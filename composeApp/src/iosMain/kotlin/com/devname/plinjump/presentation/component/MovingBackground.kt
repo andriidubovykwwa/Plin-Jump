@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import plinjump.composeapp.generated.resources.Res
 import plinjump.composeapp.generated.resources.background
 
@@ -52,7 +53,7 @@ fun MovingBackground(isAnimationRunning: Boolean) {
                 .graphicsLayer { translationX = offsetX * size.width },
             contentScale = ContentScale.FillBounds,
             painter = painterResource(Res.drawable.background),
-            contentDescription = "b"
+            contentDescription = stringResource(Res.string.background)
         )
         Image(
             modifier = Modifier
@@ -60,7 +61,7 @@ fun MovingBackground(isAnimationRunning: Boolean) {
                 .graphicsLayer { translationX = (1 + offsetX) * size.width },
             contentScale = ContentScale.FillBounds,
             painter = painterResource(Res.drawable.background),
-            contentDescription = "b"
+            contentDescription = stringResource(Res.string.background)
         )
     }
 }

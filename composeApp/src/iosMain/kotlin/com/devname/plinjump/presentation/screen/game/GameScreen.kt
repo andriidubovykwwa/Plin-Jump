@@ -1,11 +1,8 @@
 package com.devname.plinjump.presentation.screen.game
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,21 +18,20 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.devname.plinjump.presentation.component.MovingBackground
+import com.devname.plinjump.presentation.component.ObstacleGameComponent
+import com.devname.plinjump.presentation.component.PlayerBallGameComponent
 import com.devname.plinjump.presentation.screen.game.view_model.GameEvent
 import com.devname.plinjump.presentation.screen.game.view_model.GameViewModel
 import com.devname.plinjump.utils.GameConfig
 import com.devname.plinjump.utils.OrientationManager
-import com.devname.plinjump.utils.pxToDp
-import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import plinjump.composeapp.generated.resources.Res
-import plinjump.composeapp.generated.resources.obstacle_block
-import plinjump.composeapp.generated.resources.player_block
+import plinjump.composeapp.generated.resources.restart
+import plinjump.composeapp.generated.resources.start
 
 @Composable
 fun GameScreen(navController: NavController, viewModel: GameViewModel = koinViewModel()) {
@@ -65,25 +61,15 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
             .pointerInput(Unit) { detectTapGestures { onEvent(GameEvent.Jump) } }
     ) {
         MovingBackground(isAnimationRunning = state.isGameActive)
-        Image(
-            modifier = Modifier.size(pxToDp(state.blockSize).dp).offset {
-                IntOffset(
-                    x = ((state.canvasSize.width - state.blockSize) / 2).toInt(),
-                    y = (state.canvasSize.height - state.blockSize - state.playerY * state.canvasSize.height).toInt()
-                )
-            },
-            painter = painterResource(Res.drawable.player_block),
-            contentDescription = "Ball"
+        PlayerBallGameComponent(
+            gameSize = state.canvasSize,
+            blockSize = state.blockSize,
+            playerY = state.playerY
         )
-        Image(
-            modifier = Modifier.size(pxToDp(state.blockSize).dp).offset {
-                IntOffset(
-                    x = (state.canvasSize.width * state.obstacleX).toInt(),
-                    y = (state.canvasSize.height - state.blockSize).toInt()
-                )
-            },
-            painter = painterResource(Res.drawable.obstacle_block),
-            contentDescription = "Obstacle"
+        ObstacleGameComponent(
+            gameSize = state.canvasSize,
+            blockSize = state.blockSize,
+            obstacleX = state.obstacleX
         )
         Text(
             modifier = Modifier.align(Alignment.TopCenter),
@@ -99,7 +85,7 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
                 onClick = { onEvent(GameEvent.StartGame) }
             ) {
                 Text(
-                    text = if (state.isPlayerCrushed) "Restart" else "Start",
+                    text = stringResource(if (state.isPlayerCrushed) Res.string.restart else Res.string.start),
                 )
             }
         }

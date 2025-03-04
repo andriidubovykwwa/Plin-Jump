@@ -7,4 +7,5 @@ object GameConfig {
     const val JUMP_SPEED = 0.08f
     const val DEFAULT_OBSTACLE_MOVE_SPEED = 0.06f
     const val SCORE_INCREASE_SPEED = 0.3f
+    const val SPEED_X2_SCORE_THRESHOLD = 250f
 }

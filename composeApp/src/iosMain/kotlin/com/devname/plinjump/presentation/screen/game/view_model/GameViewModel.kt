@@ -131,7 +131,7 @@ class GameViewModel : ViewModel() {
     }
 
     private fun getActualObstacleMoveSpeed(floatDelta: Float): Float {
-        val scoreSpeedMultiplier = 1f + state.value.score / 220f
+        val scoreSpeedMultiplier = 1f + state.value.score / GameConfig.SPEED_X2_SCORE_THRESHOLD
         return floatDelta * GameConfig.DEFAULT_OBSTACLE_MOVE_SPEED * scoreSpeedMultiplier
     }
 
