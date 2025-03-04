@@ -2,6 +2,7 @@ package com.devname.plinjump.presentation.screen.game
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -28,6 +29,7 @@ import com.devname.plinjump.presentation.screen.game.view_model.GameEvent
 import com.devname.plinjump.presentation.screen.game.view_model.GameViewModel
 import com.devname.plinjump.utils.GameConfig
 import com.devname.plinjump.utils.OrientationManager
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import plinjump.composeapp.generated.resources.Res
@@ -46,7 +48,14 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
         }
     }
 
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(state.isGameActive) {
+        while (state.isGameActive) {
+            delay(1000)
+            onEvent(GameEvent.SecondTick)
+        }
+    }
+
+    LaunchedEffect(Unit) {
         while (true) {
             withFrameNanos { onEvent(GameEvent.UpdateGame(it)) }
         }
@@ -63,40 +72,57 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
     ) {
         MovingBackground(isAnimationRunning = state.isGameActive)
         PlayerBallGameComponent(
-            gameSize = state.canvasSize,
+            gameSize = state.gameSize,
             blockSize = state.blockSize,
             playerY = state.playerY
         )
         state.obstaclesX.forEach { obstacleX ->
             ObstacleGameComponent(
-                gameSize = state.canvasSize,
+                gameSize = state.gameSize,
                 blockSize = state.blockSize,
                 obstacleX = obstacleX
             )
         }
         state.coinsX.forEach { coinX ->
             CoinObjectGameComponent(
-                gameSize = state.canvasSize,
+                gameSize = state.gameSize,
                 blockSize = state.blockSize,
                 coinX = coinX
             )
         }
-        Text(
-            modifier = Modifier.align(Alignment.TopStart),
-            text = "Score: ${state.score.toInt()}",
-            color = Color.Black,
-            fontWeight = FontWeight.Bold,
-            fontStyle = FontStyle.Italic,
-            fontSize = 25.sp,
-        )
-        Text(
-            modifier = Modifier.align(Alignment.TopEnd),
-            text = "Coins: ${state.coins}",
-            color = Color.Black,
-            fontWeight = FontWeight.Bold,
-            fontStyle = FontStyle.Italic,
-            fontSize = 25.sp,
-        )
+        Column(
+            Modifier.align(Alignment.TopEnd),
+            horizontalAlignment = Alignment.End,
+        ) {
+            Text(
+                text = "Score: ${state.score.toInt()}",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Italic,
+                fontSize = 20.sp,
+            )
+            Text(
+                text = "Coins: ${state.coins}",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Italic,
+                fontSize = 20.sp,
+            )
+            Text(
+                text = "Shield: ${state.shieldSeconds}",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Italic,
+                fontSize = 20.sp,
+            )
+            Text(
+                text = "Fireball: ${state.fireballSeconds}",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Italic,
+                fontSize = 20.sp,
+            )
+        }
         if (!state.isGameActive) {
             Button(
                 modifier = Modifier.align(Alignment.Center),

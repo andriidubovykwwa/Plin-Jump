@@ -25,6 +25,17 @@ class GameViewModel : ViewModel() {
             is GameEvent.SetSizeData -> processSetSizeData(event.canvasSize, event.blockSize)
             is GameEvent.StartGame -> processStartGame()
             is GameEvent.UpdateGame -> processUpdateGame(event.time)
+            is GameEvent.SecondTick -> processSecondTick()
+        }
+    }
+
+    private fun processSecondTick() = viewModelScope.launch {
+        if (!state.value.isGameActive) return@launch
+        _state.update {
+            it.copy(
+                shieldSeconds = maxOf(it.shieldSeconds - 1, 0),
+                fireballSeconds = maxOf(it.fireballSeconds - 1, 0),
+            )
         }
     }
 
@@ -36,13 +47,13 @@ class GameViewModel : ViewModel() {
 
     private fun processSetSizeData(canvasSize: IntSize, blockSize: Float) = viewModelScope.launch {
         _state.update {
-            it.copy(canvasSize = canvasSize, blockSize = blockSize)
+            it.copy(gameSize = canvasSize, blockSize = blockSize)
         }
     }
 
     private fun processStartGame() = viewModelScope.launch {
         _state.update {
-            GameState(canvasSize = it.canvasSize, blockSize = it.blockSize, isGameActive = true)
+            GameState(gameSize = it.gameSize, blockSize = it.blockSize, isGameActive = true)
         }
     }
 
@@ -87,35 +98,53 @@ class GameViewModel : ViewModel() {
 
     private fun handleObstaclesCollisions() {
         val blockSize = state.value.blockSize
-        val playerY = state.value.playerY * state.value.canvasSize.height
-        val centerX = state.value.canvasSize.width * 0.5f
+        val playerY = state.value.playerY * state.value.gameSize.height
+        val centerX = state.value.gameSize.width * 0.5f
 
+        var collidedObstacleX: Float? = null
         state.value.obstaclesX.forEach {
-            val obstacleX = it * state.value.canvasSize.width
-            var isCollision = true
-            // Player is too high
-            if (playerY > blockSize) isCollision = false
-            // Player is in left from obstacle
-            if (centerX + blockSize / 2 < obstacleX) isCollision = false
-            // Player is in right from obstacle
-            if (centerX - blockSize / 2 > obstacleX + blockSize) isCollision = false
+            if (collidedObstacleX == null) {
+                val obstacleX = it * state.value.gameSize.width
+                var isCollision = true
+                // Player is too high
+                if (playerY > blockSize) isCollision = false
+                // Player is in left from obstacle
+                if (centerX + blockSize / 2 < obstacleX) isCollision = false
+                // Player is in right from obstacle
+                if (centerX - blockSize / 2 > obstacleX + blockSize) isCollision = false
 
-            if (isCollision) {
+                if (isCollision) collidedObstacleX = it
+            }
+        }
+        if (collidedObstacleX != null) {
+            if (state.value.fireballSeconds > 0) {
+                _state.update {
+                    it.copy(
+                        obstaclesX = it.obstaclesX.filter { x -> x != collidedObstacleX },
+                    )
+                }
+            } else if (state.value.shieldSeconds > 0) {
+                _state.update {
+                    it.copy(
+                        obstaclesX = it.obstaclesX.filter { x -> x != collidedObstacleX },
+                        shieldSeconds = 0
+                    )
+                }
+            } else {
                 lose()
-                return
             }
         }
     }
 
     private fun handleCoinsCollision() {
         val blockSize = state.value.blockSize
-        val playerY = state.value.playerY * state.value.canvasSize.height
-        val centerX = state.value.canvasSize.width * 0.5f
+        val playerY = state.value.playerY * state.value.gameSize.height
+        val centerX = state.value.gameSize.width * 0.5f
 
         var collidedCoinX: Float? = null
         state.value.coinsX.forEach {
             if (collidedCoinX == null) {
-                val coinX = it * state.value.canvasSize.width
+                val coinX = it * state.value.gameSize.width
                 var isCollision = true
                 // Player is too high
                 if (playerY > blockSize) isCollision = false
