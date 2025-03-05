@@ -211,7 +211,6 @@ class GameViewModel(
 
     private suspend fun lose() {
         gameRepository.processScore(state.value.score.toInt())
-        println("Add coins: ${state.value.coins}")
         gameRepository.setCoins(gameRepository.getCoins() + state.value.coins)
         _state.update {
             it.copy(isGameActive = false, isPlayerCrushed = true)

@@ -1,9 +1,11 @@
 package com.devname.plinjump.presentation.screen.game
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +21,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.devname.plinjump.presentation.component.CoinObjectGameComponent
 import com.devname.plinjump.presentation.component.MovingBackground
@@ -135,13 +139,28 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
             )
         }
         if (!state.isGameActive) {
-            Button(
-                modifier = Modifier.align(Alignment.Center),
-                onClick = { onEvent(GameEvent.StartGame) }
-            ) {
-                Text(
-                    text = stringResource(if (state.isPlayerCrushed) Res.string.restart else Res.string.start),
-                )
+            if (state.isPlayerCrushed) {
+                Dialog(onDismissRequest = {}) {
+                    Column(
+                        Modifier.background(Color.White).padding(20.dp)
+                    ) {
+                        Button(onClick = { onEvent(GameEvent.StartGame) }) {
+                            Text(stringResource(Res.string.restart))
+                        }
+                        Button(onClick = { navController.popBackStack() }) {
+                            Text("Back")
+                        }
+                    }
+                }
+            } else {
+                Button(
+                    modifier = Modifier.align(Alignment.Center),
+                    onClick = { onEvent(GameEvent.StartGame) }
+                ) {
+                    Text(
+                        text = stringResource(Res.string.start),
+                    )
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.devname.plinjump.presentation.screen.menu
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -18,8 +19,19 @@ fun MenuScreen(navController: NavController) {
         OrientationManager().orientation = OrientationManager.Orientation.ALL
     }
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Button(onClick = { navController.navigate(Screen.Game) }) {
-            Text("Play")
+        Column {
+            Button(onClick = { navController.navigate(Screen.Game) }) {
+                Text("Play")
+            }
+            Button(onClick = { navController.navigate(Screen.Info) }) {
+                Text("Info")
+            }
+            Button(onClick = { navController.navigate(Screen.Shop) }) {
+                Text("Shop")
+            }
+            Button(onClick = { navController.navigate(Screen.Skins) }) {
+                Text("Skins")
+            }
         }
     }
 }
