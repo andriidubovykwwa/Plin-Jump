@@ -18,4 +18,13 @@ data class GameState(
     val isPlayerJumping: Boolean = false,
     val isGameActive: Boolean = false,
     val isPlayerCrushed: Boolean = false,
-)
+) {
+    private val hasActiveBonus: Boolean
+        get() = shieldSeconds > 0 || fireballSeconds > 0
+
+    val canActivateShield: Boolean
+        get() = shields > 0 && !hasActiveBonus
+
+    val canActivateFireball: Boolean
+        get() = fireballs > 0 && !hasActiveBonus
+}

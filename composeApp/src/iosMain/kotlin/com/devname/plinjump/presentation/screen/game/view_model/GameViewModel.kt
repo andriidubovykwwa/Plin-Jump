@@ -48,7 +48,7 @@ class GameViewModel(
 
     private fun processActivateShield() = viewModelScope.launch {
         if (!state.value.isGameActive) return@launch
-        if (state.value.shields <= 0) return@launch
+        if (!state.value.canActivateShield) return@launch
         val newShields = state.value.shields - 1
         gameRepository.setShields(newShields)
         _state.update {
@@ -58,8 +58,8 @@ class GameViewModel(
 
     private fun processActivateFireball() = viewModelScope.launch {
         if (!state.value.isGameActive) return@launch
-        if (state.value.fireballs <= 0) return@launch
-        val newFireballs = state.value.fireballs
+        if (!state.value.canActivateFireball) return@launch
+        val newFireballs = state.value.fireballs - 1
         gameRepository.setFireballs(newFireballs)
         _state.update {
             it.copy(fireballs = newFireballs, fireballSeconds = GameConfig.FIREBALL_SECONDS)
