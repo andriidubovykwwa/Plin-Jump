@@ -44,10 +44,17 @@ class GameViewModel(
             is GameEvent.SecondTick -> processSecondTick()
             is GameEvent.ActivateFireball -> processActivateFireball()
             is GameEvent.ActivateShield -> processActivateShield()
+            is GameEvent.TogglePause -> processTogglePause()
         }
     }
 
+    private fun processTogglePause() {
+        if (state.value.isPlayerCrushed) return
+        _state.update { it.copy(isGamePaused = !it.isGamePaused) }
+    }
+
     private fun processActivateShield() = viewModelScope.launch {
+        if (state.value.isGamePaused) return@launch
         if (!state.value.isGameActive) return@launch
         if (!state.value.canActivateShield) return@launch
         val newShields = state.value.shields - 1
@@ -58,6 +65,7 @@ class GameViewModel(
     }
 
     private fun processActivateFireball() = viewModelScope.launch {
+        if (state.value.isGamePaused) return@launch
         if (!state.value.isGameActive) return@launch
         if (!state.value.canActivateFireball) return@launch
         val newFireballs = state.value.fireballs - 1
@@ -68,6 +76,7 @@ class GameViewModel(
     }
 
     private fun processSecondTick() = viewModelScope.launch {
+        if (state.value.isGamePaused) return@launch
         if (!state.value.isGameActive) return@launch
         _state.update {
             it.copy(
@@ -78,6 +87,7 @@ class GameViewModel(
     }
 
     private fun processJump() = viewModelScope.launch {
+        if (state.value.isGamePaused) return@launch
         if (!state.value.isGameActive) return@launch
         if (state.value.playerY > 0) return@launch
         _state.update { it.copy(isPlayerJumping = true) }
@@ -97,7 +107,8 @@ class GameViewModel(
                 isGameActive = true,
                 shields = it.shields,
                 fireballs = it.fireballs,
-                selectedSkinIndex = it.selectedSkinIndex
+                selectedSkinIndex = it.selectedSkinIndex,
+                isGamePaused = false
             )
         }
     }
@@ -108,6 +119,7 @@ class GameViewModel(
         prevTime = time
 
         if (!state.value.isGameActive) return@launch
+        if (state.value.isGamePaused) return@launch
 
         handleJumpUp(floatDelta)
         handleJumpDown(floatDelta)

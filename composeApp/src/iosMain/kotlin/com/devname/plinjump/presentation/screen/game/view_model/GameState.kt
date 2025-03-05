@@ -17,6 +17,7 @@ data class GameState(
     val blockSize: Float = gameSize.height * GameConfig.BLOCK_SIZE,
     val isPlayerJumping: Boolean = false,
     val isGameActive: Boolean = false,
+    val isGamePaused: Boolean = false,
     val isPlayerCrushed: Boolean = false,
     val selectedSkinIndex: Int = 0
 ) {

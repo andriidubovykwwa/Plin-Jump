@@ -32,6 +32,7 @@ import com.devname.plinjump.presentation.component.CoinObjectGameComponent
 import com.devname.plinjump.presentation.component.GameOverDialog
 import com.devname.plinjump.presentation.component.MovingBackground
 import com.devname.plinjump.presentation.component.ObstacleGameComponent
+import com.devname.plinjump.presentation.component.PauseDialog
 import com.devname.plinjump.presentation.component.PlatformComponent
 import com.devname.plinjump.presentation.component.PlayerBallGameComponent
 import com.devname.plinjump.presentation.component.ScoreDisplay
@@ -44,6 +45,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import plinjump.composeapp.generated.resources.Res
+import plinjump.composeapp.generated.resources.icon_pause
+import plinjump.composeapp.generated.resources.pause
 import plinjump.composeapp.generated.resources.play_button
 import plinjump.composeapp.generated.resources.start
 
@@ -73,6 +76,7 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
     }
 
     Box(Modifier.fillMaxSize()) {
+        MovingBackground(isAnimationRunning = state.isGameActive && !state.isGamePaused)
         Column(
             Modifier.fillMaxSize()
                 .pointerInput(Unit) { detectTapGestures { onEvent(GameEvent.Jump) } }
@@ -86,7 +90,6 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
                         onEvent(GameEvent.SetSizeData(it.size, blockSize))
                     }
             ) {
-                MovingBackground(isAnimationRunning = state.isGameActive)
                 PlayerBallGameComponent(
                     gameSize = state.gameSize,
                     blockSize = state.blockSize,
@@ -111,11 +114,20 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
                     )
                 }
             }
-            PlatformComponent(Modifier.weight(1f), isAnimationRunning = state.isGameActive)
+            PlatformComponent(
+                Modifier.weight(1f),
+                isAnimationRunning = state.isGameActive && !state.isGamePaused
+            )
         }
         // UI box
         Box(Modifier.fillMaxSize().safeContentPadding()) {
-            // TODO: add pause
+            Image(
+                modifier = Modifier.align(Alignment.TopStart).size(30.dp)
+                    .clickable { onEvent(GameEvent.TogglePause) },
+                painter = painterResource(Res.drawable.icon_pause),
+                contentDescription = stringResource(Res.string.pause),
+                contentScale = ContentScale.FillBounds
+            )
             Column(
                 Modifier.align(Alignment.TopEnd),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -151,6 +163,13 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
                     contentScale = ContentScale.FillBounds
                 )
             }
+        }
+        if (state.isGamePaused) {
+            PauseDialog(
+                onDismiss = { onEvent(GameEvent.TogglePause) },
+                onBackHome = { navController.popBackStack() },
+                onRestart = { onEvent(GameEvent.StartGame) },
+            )
         }
     }
 }
