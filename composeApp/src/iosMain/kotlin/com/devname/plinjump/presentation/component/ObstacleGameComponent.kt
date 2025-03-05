@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -13,7 +14,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import plinjump.composeapp.generated.resources.Res
 import plinjump.composeapp.generated.resources.obstacle
-import plinjump.composeapp.generated.resources.obstacle_block
 
 @Composable
 fun ObstacleGameComponent(
@@ -28,7 +28,8 @@ fun ObstacleGameComponent(
                 y = (gameSize.height - blockSize).toInt()
             )
         },
-        painter = painterResource(Res.drawable.obstacle_block),
-        contentDescription = stringResource(Res.string.obstacle)
+        painter = painterResource(Res.drawable.obstacle),
+        contentDescription = stringResource(Res.string.obstacle),
+        contentScale = ContentScale.FillBounds
     )
 }

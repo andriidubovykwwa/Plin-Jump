@@ -1,13 +1,17 @@
 package com.devname.plinjump.presentation.screen.game
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -16,28 +20,31 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.devname.plinjump.presentation.component.BonusComponent
+import com.devname.plinjump.presentation.component.CoinDisplay
 import com.devname.plinjump.presentation.component.CoinObjectGameComponent
+import com.devname.plinjump.presentation.component.GameOverDialog
 import com.devname.plinjump.presentation.component.MovingBackground
 import com.devname.plinjump.presentation.component.ObstacleGameComponent
+import com.devname.plinjump.presentation.component.PlatformComponent
 import com.devname.plinjump.presentation.component.PlayerBallGameComponent
+import com.devname.plinjump.presentation.component.ScoreDisplay
 import com.devname.plinjump.presentation.screen.game.view_model.GameEvent
 import com.devname.plinjump.presentation.screen.game.view_model.GameViewModel
 import com.devname.plinjump.utils.GameConfig
 import com.devname.plinjump.utils.OrientationManager
 import kotlinx.coroutines.delay
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import plinjump.composeapp.generated.resources.Res
-import plinjump.composeapp.generated.resources.restart
+import plinjump.composeapp.generated.resources.play_button
 import plinjump.composeapp.generated.resources.start
 
 @Composable
@@ -65,103 +72,84 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
         }
     }
 
-    Box(
-        Modifier
-            .fillMaxSize()
-            .onGloballyPositioned {
-                val blockSize = GameConfig.BLOCK_SIZE * it.size.height
-                onEvent(GameEvent.SetSizeData(it.size, blockSize))
-            }
-            .pointerInput(Unit) { detectTapGestures { onEvent(GameEvent.Jump) } }
-    ) {
-        MovingBackground(isAnimationRunning = state.isGameActive)
-        PlayerBallGameComponent(
-            gameSize = state.gameSize,
-            blockSize = state.blockSize,
-            playerY = state.playerY,
-            selectedSkinIndex = state.selectedSkinIndex
-        )
-        state.obstaclesX.forEach { obstacleX ->
-            ObstacleGameComponent(
-                gameSize = state.gameSize,
-                blockSize = state.blockSize,
-                obstacleX = obstacleX
-            )
-        }
-        state.coinsX.forEach { coinX ->
-            CoinObjectGameComponent(
-                gameSize = state.gameSize,
-                blockSize = state.blockSize,
-                coinX = coinX
-            )
-        }
+    Box(Modifier.fillMaxSize()) {
         Column(
-            Modifier.align(Alignment.TopStart),
-            horizontalAlignment = Alignment.Start,
+            Modifier.fillMaxSize()
+                .pointerInput(Unit) { detectTapGestures { onEvent(GameEvent.Jump) } }
         ) {
-            Button(onClick = { onEvent(GameEvent.ActivateShield) }) {
-                Text("Shield (${state.shields})", fontSize = 14.sp)
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(9f)
+                    .onGloballyPositioned {
+                        val blockSize = GameConfig.BLOCK_SIZE * it.size.height
+                        onEvent(GameEvent.SetSizeData(it.size, blockSize))
+                    }
+            ) {
+                MovingBackground(isAnimationRunning = state.isGameActive)
+                PlayerBallGameComponent(
+                    gameSize = state.gameSize,
+                    blockSize = state.blockSize,
+                    playerY = state.playerY,
+                    selectedSkinIndex = state.selectedSkinIndex,
+                    rotation = (state.score * 100) % 360f,
+                    isShieldActive = state.shieldSeconds > 0,
+                    isFireballActive = state.fireballSeconds > 0,
+                )
+                state.obstaclesX.forEach { obstacleX ->
+                    ObstacleGameComponent(
+                        gameSize = state.gameSize,
+                        blockSize = state.blockSize,
+                        obstacleX = obstacleX
+                    )
+                }
+                state.coinsX.forEach { coinX ->
+                    CoinObjectGameComponent(
+                        gameSize = state.gameSize,
+                        blockSize = state.blockSize,
+                        coinX = coinX
+                    )
+                }
             }
-            Button(onClick = { onEvent(GameEvent.ActivateFireball) }) {
-                Text("Fireball (${state.fireballs})", fontSize = 14.sp)
-            }
+            PlatformComponent(Modifier.weight(1f), isAnimationRunning = state.isGameActive)
         }
-        Column(
-            Modifier.align(Alignment.TopEnd),
-            horizontalAlignment = Alignment.End,
-        ) {
-            Text(
-                text = "Score: ${state.score.toInt()}",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Italic,
-                fontSize = 20.sp,
-            )
-            Text(
-                text = "Coins: ${state.coins}",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Italic,
-                fontSize = 20.sp,
-            )
-            Text(
-                text = "Shield: ${state.shieldSeconds}",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Italic,
-                fontSize = 20.sp,
-            )
-            Text(
-                text = "Fireball: ${state.fireballSeconds}",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Italic,
-                fontSize = 20.sp,
+        // UI box
+        Box(Modifier.fillMaxSize().safeContentPadding()) {
+            // TODO: add pause
+            Column(
+                Modifier.align(Alignment.TopEnd),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                ScoreDisplay(Modifier.widthIn(min = 80.dp), score = state.score.toInt())
+                CoinDisplay(Modifier.widthIn(min = 80.dp), coins = state.coins)
+            }
+            BonusComponent(
+                Modifier.align(Alignment.TopCenter),
+                onActivateShield = { onEvent(GameEvent.ActivateShield) },
+                onActivateFireball = { onEvent(GameEvent.ActivateFireball) },
+                shields = state.shields,
+                fireballs = state.fireballs,
+                shieldSeconds = state.shieldSeconds,
+                fireballSeconds = state.fireballSeconds
             )
         }
         if (!state.isGameActive) {
             if (state.isPlayerCrushed) {
-                Dialog(onDismissRequest = {}) {
-                    Column(
-                        Modifier.background(Color.White).padding(20.dp)
-                    ) {
-                        Button(onClick = { onEvent(GameEvent.StartGame) }) {
-                            Text(stringResource(Res.string.restart))
-                        }
-                        Button(onClick = { navController.popBackStack() }) {
-                            Text("Back")
-                        }
-                    }
-                }
+                GameOverDialog(
+                    onBackHome = { navController.popBackStack() },
+                    onRestart = { onEvent(GameEvent.StartGame) },
+                    score = state.score.toInt(),
+                    coins = state.coins
+                )
             } else {
-                Button(
-                    modifier = Modifier.align(Alignment.Center),
-                    onClick = { onEvent(GameEvent.StartGame) }
-                ) {
-                    Text(
-                        text = stringResource(Res.string.start),
-                    )
-                }
+                Image(
+                    modifier = Modifier.align(Alignment.Center).size(100.dp).clip(CircleShape)
+                        .clickable { onEvent(GameEvent.StartGame) },
+                    painter = painterResource(Res.drawable.play_button),
+                    contentDescription = stringResource(Res.string.start),
+                    contentScale = ContentScale.FillBounds
+                )
             }
         }
     }

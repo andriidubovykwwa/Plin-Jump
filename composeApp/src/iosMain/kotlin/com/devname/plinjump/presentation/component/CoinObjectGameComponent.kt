@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -26,8 +28,9 @@ fun CoinObjectGameComponent(
                 x = (gameSize.width * coinX).toInt(),
                 y = (gameSize.height - blockSize).toInt()
             )
-        },
+        }.scale(0.75f),
         painter = painterResource(Res.drawable.coin),
-        contentDescription = stringResource(Res.string.coin)
+        contentDescription = stringResource(Res.string.coin),
+        contentScale = ContentScale.FillBounds
     )
 }

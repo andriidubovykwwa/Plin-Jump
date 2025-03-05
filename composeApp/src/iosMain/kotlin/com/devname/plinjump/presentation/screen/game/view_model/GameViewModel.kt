@@ -147,6 +147,7 @@ class GameViewModel(
         val centerX = state.value.gameSize.width * 0.5f
 
         var collidedObstacleX: Float? = null
+        val safeZoneHorizontal = 0.24f
         state.value.obstaclesX.forEach {
             if (collidedObstacleX == null) {
                 val obstacleX = it * state.value.gameSize.width
@@ -154,9 +155,13 @@ class GameViewModel(
                 // Player is too high
                 if (playerY > blockSize) isCollision = false
                 // Player is in left from obstacle
-                if (centerX + blockSize / 2 < obstacleX) isCollision = false
+                if (centerX + blockSize / 2 < obstacleX + blockSize * safeZoneHorizontal) {
+                    isCollision = false
+                }
                 // Player is in right from obstacle
-                if (centerX - blockSize / 2 > obstacleX + blockSize) isCollision = false
+                if (centerX - blockSize / 2 > obstacleX + blockSize - blockSize * safeZoneHorizontal) {
+                    isCollision = false
+                }
 
                 if (isCollision) collidedObstacleX = it
             }

@@ -8,7 +8,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,11 +21,10 @@ import androidx.compose.ui.layout.ContentScale
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import plinjump.composeapp.generated.resources.Res
-import plinjump.composeapp.generated.resources.background
-import plinjump.composeapp.generated.resources.bg_game
+import plinjump.composeapp.generated.resources.platform
 
 @Composable
-fun MovingBackground(isAnimationRunning: Boolean) {
+fun PlatformComponent(modifier: Modifier = Modifier, isAnimationRunning: Boolean) {
     var animationRunning by remember { mutableStateOf(isAnimationRunning) }
     var stopOffsetX by remember { mutableStateOf(0f) }
 
@@ -45,24 +44,24 @@ fun MovingBackground(isAnimationRunning: Boolean) {
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         Image(
             modifier = Modifier
-                .fillMaxSize()
+                .matchParentSize()
                 .graphicsLayer { translationX = offsetX * size.width },
             contentScale = ContentScale.FillBounds,
-            painter = painterResource(Res.drawable.bg_game),
-            contentDescription = stringResource(Res.string.background)
+            painter = painterResource(Res.drawable.platform),
+            contentDescription = stringResource(Res.string.platform)
         )
         Image(
             modifier = Modifier
-                .fillMaxSize()
+                .matchParentSize()
                 .graphicsLayer { translationX = (1 + offsetX) * size.width },
             contentScale = ContentScale.FillBounds,
-            painter = painterResource(Res.drawable.bg_game),
-            contentDescription = stringResource(Res.string.background)
+            painter = painterResource(Res.drawable.platform),
+            contentDescription = stringResource(Res.string.platform)
         )
     }
 }

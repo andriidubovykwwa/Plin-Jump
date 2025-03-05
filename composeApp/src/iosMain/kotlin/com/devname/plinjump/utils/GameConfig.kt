@@ -2,9 +2,11 @@ package com.devname.plinjump.utils
 
 import org.jetbrains.compose.resources.DrawableResource
 import plinjump.composeapp.generated.resources.Res
-import plinjump.composeapp.generated.resources.coin
-import plinjump.composeapp.generated.resources.obstacle_block
-import plinjump.composeapp.generated.resources.player_block
+import plinjump.composeapp.generated.resources.ball_1
+import plinjump.composeapp.generated.resources.ball_2
+import plinjump.composeapp.generated.resources.ball_3
+import plinjump.composeapp.generated.resources.ball_4
+import plinjump.composeapp.generated.resources.ball_5
 
 object GameConfig {
     // % of screen height
@@ -16,14 +18,16 @@ object GameConfig {
     const val SPEED_X2_SCORE_THRESHOLD = 250f
 
     // Active bonuses
-    const val SHIELD_PRICE = 15
-    const val FIREBALL_PRICE = 40
+    const val SHIELD_PRICE = 1 // TODO: 15
+    const val FIREBALL_PRICE = 1 // TODO: 40
     const val SHIELD_SECONDS = 20
     const val FIREBALL_SECONDS = 10
 
     enum class Skin(val res: DrawableResource, val price: Int) {
-        BALL_1(Res.drawable.player_block, 0),
-        BALL_2(Res.drawable.obstacle_block, 10),
-        BALL_3(Res.drawable.coin, 15),
+        BALL_1(Res.drawable.ball_1, 0),
+        BALL_2(Res.drawable.ball_2, 50),
+        BALL_3(Res.drawable.ball_3, 50),
+        BALL_4(Res.drawable.ball_4, 50),
+        BALL_5(Res.drawable.ball_5, 50),
     }
 }
