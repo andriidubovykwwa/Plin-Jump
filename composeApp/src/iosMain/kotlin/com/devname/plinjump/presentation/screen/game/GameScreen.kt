@@ -78,7 +78,8 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
         PlayerBallGameComponent(
             gameSize = state.gameSize,
             blockSize = state.blockSize,
-            playerY = state.playerY
+            playerY = state.playerY,
+            selectedSkinIndex = state.selectedSkinIndex
         )
         state.obstaclesX.forEach { obstacleX ->
             ObstacleGameComponent(

@@ -28,7 +28,8 @@ class GameViewModel(
             _state.update {
                 it.copy(
                     shields = gameRepository.getShields(),
-                    fireballs = gameRepository.getFireballs()
+                    fireballs = gameRepository.getFireballs(),
+                    selectedSkinIndex = gameRepository.getSelectedSkin()
                 )
             }
         }
@@ -95,7 +96,8 @@ class GameViewModel(
                 blockSize = it.blockSize,
                 isGameActive = true,
                 shields = it.shields,
-                fireballs = it.fireballs
+                fireballs = it.fireballs,
+                selectedSkinIndex = it.selectedSkinIndex
             )
         }
     }

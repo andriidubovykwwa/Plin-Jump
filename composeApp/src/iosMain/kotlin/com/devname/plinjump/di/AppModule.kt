@@ -5,6 +5,7 @@ import com.devname.plinjump.domain.GameRepository
 import com.devname.plinjump.presentation.screen.game.view_model.GameViewModel
 import com.devname.plinjump.presentation.screen.menu.view_model.MenuViewModel
 import com.devname.plinjump.presentation.screen.shop.view_model.ShopViewModel
+import com.devname.plinjump.presentation.screen.skins.view_model.SkinsViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -13,4 +14,5 @@ val appModule = module {
     viewModel { GameViewModel(get()) }
     viewModel { MenuViewModel(get()) }
     viewModel { ShopViewModel(get()) }
+    viewModel { SkinsViewModel(get()) }
 }

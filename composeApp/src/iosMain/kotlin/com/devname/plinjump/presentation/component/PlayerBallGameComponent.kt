@@ -8,18 +8,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.devname.plinjump.utils.GameConfig
 import com.devname.plinjump.utils.pxToDp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import plinjump.composeapp.generated.resources.Res
 import plinjump.composeapp.generated.resources.ball
-import plinjump.composeapp.generated.resources.player_block
 
 @Composable
 fun PlayerBallGameComponent(
     gameSize: IntSize,
     blockSize: Float,
-    playerY: Float
+    playerY: Float,
+    selectedSkinIndex: Int
 ) {
     Image(
         modifier = Modifier.size(pxToDp(blockSize).dp).offset {
@@ -28,7 +29,7 @@ fun PlayerBallGameComponent(
                 y = (gameSize.height - blockSize - playerY * gameSize.height).toInt()
             )
         },
-        painter = painterResource(Res.drawable.player_block),
+        painter = painterResource(GameConfig.Skin.entries[selectedSkinIndex].res),
         contentDescription = stringResource(Res.string.ball)
     )
 }

@@ -2,6 +2,7 @@ package com.devname.plinjump.data
 
 import com.devname.plinjump.domain.GameRepository
 import com.devname.plinjump.presentation.screen.SharedData
+import com.devname.plinjump.utils.GameConfig
 import platform.Foundation.NSUserDefaults
 
 class GameRepositoryImpl : GameRepository {
@@ -12,6 +13,8 @@ class GameRepositoryImpl : GameRepository {
         private const val SHIELDS_KEY = "shields"
         private const val FIREBALLS_KEY = "fireballs"
         private const val HIGH_SCORE_KEY = "high_score"
+        private const val SKIN_KEY = "skin"
+        private const val SELECTED_SKIN_KEY = "selected_skin"
     }
 
     override suspend fun getCoins(): Int {
@@ -54,5 +57,29 @@ class GameRepositoryImpl : GameRepository {
         if (value <= getHighScore()) return
         SharedData.updateHighScore(value)
         userDefaults.setInteger(value.toLong(), forKey = HIGH_SCORE_KEY)
+    }
+
+    override suspend fun getSkinStatuses(): List<Boolean> {
+        return List(GameConfig.Skin.entries.size) { index ->
+            if (index == 0) {
+                true
+            } else if (userDefaults.objectForKey("$SKIN_KEY$index") != null) {
+                userDefaults.boolForKey("$SKIN_KEY$index")
+            } else false
+        }
+    }
+
+    override suspend fun activateSkin(index: Int) {
+        userDefaults.setBool(true, forKey = "$SKIN_KEY$index")
+    }
+
+    override suspend fun getSelectedSkin(): Int {
+        return if (userDefaults.objectForKey(SELECTED_SKIN_KEY) != null) {
+            userDefaults.integerForKey(SELECTED_SKIN_KEY).toInt()
+        } else 0
+    }
+
+    override suspend fun setSelectedSkin(index: Int) {
+        userDefaults.setInteger(index.toLong(), forKey = SELECTED_SKIN_KEY)
     }
 }

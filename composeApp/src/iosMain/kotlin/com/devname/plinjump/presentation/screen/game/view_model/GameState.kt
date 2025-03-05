@@ -18,6 +18,7 @@ data class GameState(
     val isPlayerJumping: Boolean = false,
     val isGameActive: Boolean = false,
     val isPlayerCrushed: Boolean = false,
+    val selectedSkinIndex: Int = 0
 ) {
     private val hasActiveBonus: Boolean
         get() = shieldSeconds > 0 || fireballSeconds > 0
