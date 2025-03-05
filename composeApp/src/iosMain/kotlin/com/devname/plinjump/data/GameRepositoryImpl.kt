@@ -1,6 +1,7 @@
 package com.devname.plinjump.data
 
 import com.devname.plinjump.domain.GameRepository
+import com.devname.plinjump.presentation.screen.SharedData
 import platform.Foundation.NSUserDefaults
 
 class GameRepositoryImpl : GameRepository {
@@ -51,6 +52,7 @@ class GameRepositoryImpl : GameRepository {
 
     override suspend fun processScore(value: Int) {
         if (value <= getHighScore()) return
+        SharedData.updateHighScore(value)
         userDefaults.setInteger(value.toLong(), forKey = HIGH_SCORE_KEY)
     }
 }
