@@ -1,9 +1,15 @@
 package com.devname.plinjump.presentation.component
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.invisibleToUser
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -22,13 +28,27 @@ fun GameText(
     color: Color = Color.White,
     textAlign: TextAlign = TextAlign.Start
 ) {
-    Text(
-        modifier = modifier,
-        text = text,
-        fontSize = fontSize,
-        color = color,
-        fontWeight = fontWeight,
-        fontFamily = FontFamily(Font(Res.font.kronaone_regular)),
-        textAlign = textAlign
-    )
+    Box(modifier) {
+        @OptIn(ExperimentalComposeUiApi::class)
+        Text(
+            text = text,
+            modifier = Modifier.semantics { invisibleToUser() },
+            color = Color.Black,
+            style = LocalTextStyle.current.copy(drawStyle = Stroke(8f)),
+            fontSize = fontSize,
+            fontWeight = fontWeight,
+            fontFamily = FontFamily(Font(Res.font.kronaone_regular)),
+            textAlign = textAlign
+        )
+
+        Text(
+            modifier = modifier,
+            text = text,
+            fontSize = fontSize,
+            color = color,
+            fontWeight = fontWeight,
+            fontFamily = FontFamily(Font(Res.font.kronaone_regular)),
+            textAlign = textAlign
+        )
+    }
 }
