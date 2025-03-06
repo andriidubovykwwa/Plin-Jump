@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,40 +26,55 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import plinjump.composeapp.generated.resources.Res
+import plinjump.composeapp.generated.resources.ball
 import plinjump.composeapp.generated.resources.buy
 import plinjump.composeapp.generated.resources.coin
+import plinjump.composeapp.generated.resources.select
+import plinjump.composeapp.generated.resources.selected
 
 @Composable
-fun ShopComponent(
+fun SkinComponent(
     modifier: Modifier = Modifier,
-    name: String,
     price: Int,
     coins: Int,
+    index: Int,
     onBuy: () -> Unit,
+    onSelect: () -> Unit,
+    isSelected: Boolean,
+    isAvailable: Boolean,
     res: DrawableResource
 ) {
     val shape = RoundedCornerShape(20.dp)
     Row(
-        modifier.border(5.dp, Color(0xffb03dd9), shape)
+        modifier.border(5.dp, if (isSelected) Color(0xff4e4eca) else Color(0xffb03dd9), shape)
             .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xff411F98),
-                        Color(0xff842AA2),
+                if (isSelected) {
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xff0a0a75),
+                            Color(0xff3838a8),
+                        )
                     )
-                ),
+                } else {
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xff411F98),
+                            Color(0xff842AA2),
+                        )
+                    )
+                },
                 shape
             )
-            .padding(5.dp),
+            .padding(10.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
             Image(
-                modifier = Modifier.size(75.dp),
+                modifier = Modifier.size(60.dp),
                 painter = painterResource(res),
                 contentScale = ContentScale.FillBounds,
-                contentDescription = name,
+                contentDescription = "${stringResource(Res.string.ball)} $index",
             )
         }
         Column(
@@ -66,20 +82,26 @@ fun ShopComponent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            GameText(text = name, fontSize = 22.sp)
             Row(
+                Modifier.heightIn(min = 30.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(3.dp)
             ) {
-                GameText(text = price.toString(), fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                Image(
-                    modifier = Modifier.size(16.dp),
-                    painter = painterResource(Res.drawable.coin),
-                    contentDescription = stringResource(Res.string.coin),
-                    contentScale = ContentScale.FillBounds
-                )
+                if (!isAvailable) {
+                    GameText(
+                        text = price.toString(),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Image(
+                        modifier = Modifier.size(16.dp),
+                        painter = painterResource(Res.drawable.coin),
+                        contentDescription = stringResource(Res.string.coin),
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
             }
-            val brush = if (coins >= price) {
+            val brush = if (coins >= price || isAvailable) {
                 Brush.verticalGradient(
                     colors = listOf(
                         Color(0xff0A743E),
@@ -94,7 +116,7 @@ fun ShopComponent(
                     )
                 )
             }
-            val borderColor = if (coins >= price) Color(0xff55cb4f)
+            val borderColor = if (coins >= price || isAvailable) Color(0xff55cb4f)
             else Color(0xffea191a)
             Box(
                 Modifier.border(3.dp, borderColor, shape)
@@ -103,10 +125,18 @@ fun ShopComponent(
                         shape
                     )
                     .clip(shape)
-                    .clickable { onBuy() }
+                    .clickable {
+                        if (isAvailable) onSelect()
+                        else onBuy()
+                    }
                     .padding(vertical = 5.dp, horizontal = 30.dp),
             ) {
-                GameText(text = stringResource(Res.string.buy), fontSize = 19.sp)
+                GameText(
+                    text = if (isSelected) stringResource(Res.string.selected)
+                    else if (isAvailable) stringResource(Res.string.select)
+                    else stringResource(Res.string.buy),
+                    fontSize = 19.sp
+                )
             }
         }
     }

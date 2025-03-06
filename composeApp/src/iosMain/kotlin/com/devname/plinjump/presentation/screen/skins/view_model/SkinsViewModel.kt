@@ -38,6 +38,7 @@ class SkinsViewModel(
         if (index < 0 && index >= GameConfig.Skin.entries.size) return@launch
         val skin = GameConfig.Skin.entries[index]
         if (state.value.coins < skin.price) return@launch
+        if (state.value.skinsStatuses[index]) return@launch
         val newCoins = state.value.coins - skin.price
         val newSkinStatuses = state.value.skinsStatuses.mapIndexed { i, it ->
             if (i == index) true else it

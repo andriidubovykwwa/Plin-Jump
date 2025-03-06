@@ -18,7 +18,8 @@
     <string name="skins">SKINS</string>
     <string name="settings">SETTINGS</string>
     <string name="buy">BUY</string>
-    <string name="select">Select</string>
+    <string name="select">SELECT</string>
+    <string name="selected">SELECTED</string>
     <string name="music">Music</string>
     <string name="sounds">Sounds</string>
     <string name="high_score">High Score</string>
