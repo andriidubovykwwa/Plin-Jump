@@ -71,7 +71,7 @@ fun ShopComponent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(3.dp)
             ) {
-                GameText(text = coins.toString(), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                GameText(text = price.toString(), fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Image(
                     modifier = Modifier.size(16.dp),
                     painter = painterResource(Res.drawable.coin),
@@ -97,16 +97,16 @@ fun ShopComponent(
             val borderColor = if (coins >= price) Color(0xff55cb4f)
             else Color(0xffea191a)
             Box(
-                Modifier.border(5.dp, borderColor, shape)
+                Modifier.border(3.dp, borderColor, shape)
                     .background(
                         brush,
                         shape
                     )
-                    .padding(vertical = 8.dp, horizontal = 15.dp)
+                    .padding(vertical = 5.dp, horizontal = 30.dp)
                     .clip(shape)
                     .clickable { onBuy() },
             ) {
-                GameText(text = stringResource(Res.string.buy), fontSize = 15.sp)
+                GameText(text = stringResource(Res.string.buy), fontSize = 19.sp)
             }
         }
     }

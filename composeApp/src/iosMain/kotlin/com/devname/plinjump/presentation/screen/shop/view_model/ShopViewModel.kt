@@ -34,7 +34,7 @@ class ShopViewModel(
         }
     }
 
-    private fun processBuyFireball() = viewModelScope.launch {
+    private fun processBuyShield() = viewModelScope.launch {
         if (!state.value.canBuyShield) return@launch
         val newCoins = state.value.coins - GameConfig.SHIELD_PRICE
         val newShields = state.value.shields + 1
@@ -45,7 +45,7 @@ class ShopViewModel(
         }
     }
 
-    private fun processBuyShield() = viewModelScope.launch {
+    private fun processBuyFireball() = viewModelScope.launch {
         if (!state.value.canBuyFireball) return@launch
         val newCoins = state.value.coins - GameConfig.FIREBALL_PRICE
         val newFireballs = state.value.fireballs + 1
