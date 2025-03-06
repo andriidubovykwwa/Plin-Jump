@@ -17,7 +17,10 @@ class MenuViewModel(
     init {
         viewModelScope.launch {
             _state.update {
-                it.copy(highScore = gameRepository.getHighScore())
+                it.copy(
+                    highScore = gameRepository.getHighScore(),
+                    selectedSkinIndex = gameRepository.getSelectedSkin()
+                )
             }
         }
     }

@@ -31,12 +31,13 @@ import plinjump.composeapp.generated.resources.shield
 @Composable
 fun BonusComponent(
     modifier: Modifier = Modifier,
-    onActivateShield: () -> Unit,
-    onActivateFireball: () -> Unit,
-    shieldSeconds: Int,
-    fireballSeconds: Int,
+    onActivateShield: () -> Unit = {},
+    onActivateFireball: () -> Unit = {},
+    shieldSeconds: Int = 0,
+    fireballSeconds: Int = 0,
     shields: Int,
-    fireballs: Int
+    fireballs: Int,
+    alwaysDisplayAll: Boolean = false
 ) {
     Row(
         modifier,
@@ -78,7 +79,7 @@ fun BonusComponent(
                 )
             }
         } else {
-            if (shields > 0) {
+            if (shields > 0 || alwaysDisplayAll) {
                 Row(
                     modifier = modifier
                         .widthIn(min = 90.dp)
@@ -112,7 +113,7 @@ fun BonusComponent(
                     )
                 }
             }
-            if (fireballs > 0) {
+            if (fireballs > 0 || alwaysDisplayAll) {
                 Row(
                     modifier = modifier
                         .widthIn(min = 90.dp)

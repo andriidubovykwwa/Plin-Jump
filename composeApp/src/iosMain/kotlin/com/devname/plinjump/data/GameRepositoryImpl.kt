@@ -80,6 +80,7 @@ class GameRepositoryImpl : GameRepository {
     }
 
     override suspend fun setSelectedSkin(index: Int) {
+        SharedData.updateSelectedSkinIndex(index)
         userDefaults.setInteger(index.toLong(), forKey = SELECTED_SKIN_KEY)
     }
 }
