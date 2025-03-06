@@ -68,6 +68,7 @@ fun ShopScreen(navController: NavController, viewModel: ShopViewModel = koinView
                 ) {
                     Image(
                         modifier = Modifier.width(32.dp).clickable {
+                            SoundManager.playButtonClick(state.sound)
                             navController.popBackStack()
                         },
                         painter = painterResource(Res.drawable.icon_back),
