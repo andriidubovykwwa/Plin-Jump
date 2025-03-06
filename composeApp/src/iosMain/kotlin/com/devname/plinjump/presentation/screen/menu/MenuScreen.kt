@@ -18,6 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,11 +33,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.devname.plinjump.presentation.component.AdaptiveContainer
 import com.devname.plinjump.presentation.component.GameText
+import com.devname.plinjump.presentation.component.SettingsDialog
 import com.devname.plinjump.presentation.navigation.Screen
 import com.devname.plinjump.presentation.screen.SharedData
+import com.devname.plinjump.presentation.screen.menu.view_model.MenuEvent
 import com.devname.plinjump.presentation.screen.menu.view_model.MenuViewModel
 import com.devname.plinjump.utils.GameConfig
 import com.devname.plinjump.utils.OrientationManager
+import com.devname.plinjump.utils.SoundManager
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -56,10 +62,15 @@ import plinjump.composeapp.generated.resources.start
 @Composable
 fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinViewModel()) {
     val state by viewModel.state.collectAsState()
+    val onEvent = viewModel::onEvent
     val sharedHighScore by SharedData.highScore.collectAsState(null)
     val sharedSelectedSkinIndex by SharedData.selectedSkinIndex.collectAsState(null)
+    var isSettingsOpened by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         OrientationManager().orientation = OrientationManager.Orientation.ALL
+    }
+    LaunchedEffect(state.music) {
+        SoundManager.playMusic(state.music)
     }
     Box(
         Modifier.fillMaxSize().paint(
@@ -76,6 +87,7 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
             )
             Image(
                 modifier = Modifier.size(150.dp).clip(CircleShape).clickable {
+                    SoundManager.playButtonClick(state.sound)
                     navController.navigate(Screen.Game)
                 },
                 painter = painterResource(Res.drawable.play_button),
@@ -100,7 +112,8 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
         ) {
             Image(
                 modifier = Modifier.size(40.dp).clip(CircleShape).clickable {
-                    // TODO: open settings
+                    SoundManager.playButtonClick(state.sound)
+                    isSettingsOpened = true
                 },
                 painter = painterResource(Res.drawable.settings_button),
                 contentDescription = stringResource(Res.string.settings),
@@ -108,6 +121,7 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
             )
             Image(
                 modifier = Modifier.size(40.dp).clip(CircleShape).clickable {
+                    SoundManager.playButtonClick(state.sound)
                     navController.navigate(Screen.Info)
                 },
                 painter = painterResource(Res.drawable.info_button),
@@ -116,6 +130,7 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
             )
             Image(
                 modifier = Modifier.size(40.dp).clip(CircleShape).clickable {
+                    SoundManager.playButtonClick(state.sound)
                     navController.navigate(Screen.Shop)
                 },
                 painter = painterResource(Res.drawable.shop_button),
@@ -127,6 +142,7 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
                     painter = painterResource(Res.drawable.round_button_bg),
                     contentScale = ContentScale.FillBounds
                 ).clip(CircleShape).clickable {
+                    SoundManager.playButtonClick(state.sound)
                     navController.navigate(Screen.Skins)
                 },
                 contentAlignment = Alignment.Center
@@ -140,5 +156,14 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
                 )
             }
         }
+    }
+    if (isSettingsOpened) {
+        SettingsDialog(
+            music = state.music,
+            sound = state.sound,
+            onSetMusic = { onEvent(MenuEvent.SetMusic(it)) },
+            onSetSound = { onEvent(MenuEvent.SetSound(it)) },
+            onDismiss = { isSettingsOpened = false }
+        )
     }
 }

@@ -40,6 +40,7 @@ import com.devname.plinjump.presentation.screen.game.view_model.GameEvent
 import com.devname.plinjump.presentation.screen.game.view_model.GameViewModel
 import com.devname.plinjump.utils.GameConfig
 import com.devname.plinjump.utils.OrientationManager
+import com.devname.plinjump.utils.SoundManager
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -123,7 +124,10 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
         Box(Modifier.fillMaxSize().safeContentPadding()) {
             Image(
                 modifier = Modifier.align(Alignment.TopStart).size(30.dp)
-                    .clickable { onEvent(GameEvent.TogglePause) },
+                    .clickable {
+                        SoundManager.playButtonClick(state.sound)
+                        onEvent(GameEvent.TogglePause)
+                    },
                 painter = painterResource(Res.drawable.icon_pause),
                 contentDescription = stringResource(Res.string.pause),
                 contentScale = ContentScale.FillBounds
@@ -138,8 +142,14 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
             }
             BonusComponent(
                 Modifier.align(Alignment.TopCenter),
-                onActivateShield = { onEvent(GameEvent.ActivateShield) },
-                onActivateFireball = { onEvent(GameEvent.ActivateFireball) },
+                onActivateShield = {
+                    SoundManager.playButtonClick(state.sound)
+                    onEvent(GameEvent.ActivateShield)
+                },
+                onActivateFireball = {
+                    SoundManager.playButtonClick(state.sound)
+                    onEvent(GameEvent.ActivateFireball)
+                },
                 shields = state.shields,
                 fireballs = state.fireballs,
                 shieldSeconds = state.shieldSeconds,
@@ -149,15 +159,24 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
         if (!state.isGameActive) {
             if (state.isPlayerCrushed) {
                 GameOverDialog(
-                    onBackHome = { navController.popBackStack() },
-                    onRestart = { onEvent(GameEvent.StartGame) },
+                    onBackHome = {
+                        SoundManager.playButtonClick(state.sound)
+                        navController.popBackStack()
+                    },
+                    onRestart = {
+                        SoundManager.playButtonClick(state.sound)
+                        onEvent(GameEvent.StartGame)
+                    },
                     score = state.score.toInt(),
                     coins = state.coins
                 )
             } else {
                 Image(
                     modifier = Modifier.align(Alignment.Center).size(100.dp).clip(CircleShape)
-                        .clickable { onEvent(GameEvent.StartGame) },
+                        .clickable {
+                            SoundManager.playButtonClick(state.sound)
+                            onEvent(GameEvent.StartGame)
+                        },
                     painter = painterResource(Res.drawable.play_button),
                     contentDescription = stringResource(Res.string.start),
                     contentScale = ContentScale.FillBounds
@@ -166,9 +185,18 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
         }
         if (state.isGamePaused) {
             PauseDialog(
-                onDismiss = { onEvent(GameEvent.TogglePause) },
-                onBackHome = { navController.popBackStack() },
-                onRestart = { onEvent(GameEvent.StartGame) },
+                onDismiss = {
+                    SoundManager.playButtonClick(state.sound)
+                    onEvent(GameEvent.TogglePause)
+                },
+                onBackHome = {
+                    SoundManager.playButtonClick(state.sound)
+                    navController.popBackStack()
+                },
+                onRestart = {
+                    SoundManager.playButtonClick(state.sound)
+                    onEvent(GameEvent.StartGame)
+                },
             )
         }
     }

@@ -29,6 +29,7 @@ import com.devname.plinjump.presentation.component.SkinComponent
 import com.devname.plinjump.presentation.screen.skins.view_model.SkinsEvent
 import com.devname.plinjump.presentation.screen.skins.view_model.SkinsViewModel
 import com.devname.plinjump.utils.GameConfig
+import com.devname.plinjump.utils.SoundManager
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -64,6 +65,7 @@ fun SkinsScreen(navController: NavController, viewModel: SkinsViewModel = koinVi
                 ) {
                     Image(
                         modifier = Modifier.width(32.dp).clickable {
+                            SoundManager.playButtonClick(state.sound)
                             navController.popBackStack()
                         },
                         painter = painterResource(Res.drawable.icon_back),
@@ -85,9 +87,15 @@ fun SkinsScreen(navController: NavController, viewModel: SkinsViewModel = koinVi
                     index = index,
                     price = skin.price,
                     coins = state.coins,
-                    onBuy = { onEvent(SkinsEvent.BuySkin(index)) },
+                    onBuy = {
+                        SoundManager.playButtonClick(state.sound)
+                        onEvent(SkinsEvent.BuySkin(index))
+                    },
                     isSelected = state.selectedSkinIndex == index,
-                    onSelect = { onEvent(SkinsEvent.SelectSkin(index)) },
+                    onSelect = {
+                        SoundManager.playButtonClick(state.sound)
+                        onEvent(SkinsEvent.SelectSkin(index))
+                    },
                     isAvailable = state.skinsStatuses[index]
                 )
             }

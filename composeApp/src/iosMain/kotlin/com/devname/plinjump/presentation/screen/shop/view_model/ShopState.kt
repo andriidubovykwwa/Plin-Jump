@@ -5,7 +5,8 @@ import com.devname.plinjump.utils.GameConfig
 data class ShopState(
     val coins: Int = 0,
     val shields: Int = 0,
-    val fireballs: Int = 0
+    val fireballs: Int = 0,
+    val sound: Int = 0
 ) {
     val canBuyShield: Boolean
         get() = coins >= GameConfig.SHIELD_PRICE

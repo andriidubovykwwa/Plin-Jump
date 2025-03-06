@@ -21,7 +21,8 @@ class ShopViewModel(
                 it.copy(
                     coins = gameRepository.getCoins(),
                     shields = gameRepository.getShields(),
-                    fireballs = gameRepository.getFireballs()
+                    fireballs = gameRepository.getFireballs(),
+                    sound = gameRepository.getSound()
                 )
             }
         }

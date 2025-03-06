@@ -21,7 +21,8 @@ class SkinsViewModel(
                 it.copy(
                     coins = gameRepository.getCoins(),
                     skinsStatuses = gameRepository.getSkinStatuses(),
-                    selectedSkinIndex = gameRepository.getSelectedSkin()
+                    selectedSkinIndex = gameRepository.getSelectedSkin(),
+                    sound = gameRepository.getSound()
                 )
             }
         }

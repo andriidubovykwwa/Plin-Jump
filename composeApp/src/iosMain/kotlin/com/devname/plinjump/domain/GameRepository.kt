@@ -13,4 +13,8 @@ interface GameRepository {
     suspend fun activateSkin(index: Int)
     suspend fun getSelectedSkin(): Int
     suspend fun setSelectedSkin(index: Int)
+    suspend fun getMusic(): Int
+    suspend fun setMusic(value: Int)
+    suspend fun getSound(): Int
+    suspend fun setSound(value: Int)
 }

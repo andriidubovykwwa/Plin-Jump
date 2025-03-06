@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -23,8 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.devname.plinjump.presentation.component.GameText
+import com.devname.plinjump.presentation.screen.info.view_model.InfoViewModel
+import com.devname.plinjump.utils.SoundManager
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import plinjump.composeapp.generated.resources.Res
 import plinjump.composeapp.generated.resources.back
 import plinjump.composeapp.generated.resources.bg_info
@@ -34,7 +39,8 @@ import plinjump.composeapp.generated.resources.info
 import plinjump.composeapp.generated.resources.shield
 
 @Composable
-fun InfoScreen(navController: NavController) {
+fun InfoScreen(navController: NavController, viewModel: InfoViewModel = koinViewModel()) {
+    val state by viewModel.state.collectAsState()
     Box(
         Modifier
             .fillMaxSize()
@@ -57,6 +63,7 @@ fun InfoScreen(navController: NavController) {
                 ) {
                     Image(
                         modifier = Modifier.width(32.dp).clickable {
+                            SoundManager.playButtonClick(state.sound)
                             navController.popBackStack()
                         },
                         painter = painterResource(Res.drawable.icon_back),

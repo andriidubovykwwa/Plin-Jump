@@ -53,7 +53,6 @@ fun PauseDialog(
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(10.dp))
-            Spacer(Modifier.height(10.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(15.dp)

@@ -19,7 +19,8 @@ data class GameState(
     val isGameActive: Boolean = false,
     val isGamePaused: Boolean = false,
     val isPlayerCrushed: Boolean = false,
-    val selectedSkinIndex: Int = 0
+    val selectedSkinIndex: Int = 0,
+    val sound: Int = 5
 ) {
     private val hasActiveBonus: Boolean
         get() = shieldSeconds > 0 || fireballSeconds > 0

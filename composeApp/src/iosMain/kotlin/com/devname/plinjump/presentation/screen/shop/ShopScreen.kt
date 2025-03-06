@@ -30,6 +30,7 @@ import com.devname.plinjump.presentation.component.ShopComponent
 import com.devname.plinjump.presentation.screen.shop.view_model.ShopEvent
 import com.devname.plinjump.presentation.screen.shop.view_model.ShopViewModel
 import com.devname.plinjump.utils.GameConfig
+import com.devname.plinjump.utils.SoundManager
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -94,7 +95,10 @@ fun ShopScreen(navController: NavController, viewModel: ShopViewModel = koinView
                     res = Res.drawable.shield,
                     price = GameConfig.SHIELD_PRICE,
                     coins = state.coins,
-                    onBuy = { onEvent(ShopEvent.BuyShield) }
+                    onBuy = {
+                        SoundManager.playButtonClick(state.sound)
+                        onEvent(ShopEvent.BuyShield)
+                    }
                 )
             }
             item {
@@ -104,7 +108,10 @@ fun ShopScreen(navController: NavController, viewModel: ShopViewModel = koinView
                     res = Res.drawable.fireball,
                     price = GameConfig.FIREBALL_PRICE,
                     coins = state.coins,
-                    onBuy = { onEvent(ShopEvent.BuyFireball) }
+                    onBuy = {
+                        SoundManager.playButtonClick(state.sound)
+                        onEvent(ShopEvent.BuyFireball)
+                    }
                 )
             }
         }

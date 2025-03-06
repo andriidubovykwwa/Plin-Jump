@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devname.plinjump.domain.GameRepository
 import com.devname.plinjump.utils.GameConfig
+import com.devname.plinjump.utils.SoundManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -29,7 +30,8 @@ class GameViewModel(
                 it.copy(
                     shields = gameRepository.getShields(),
                     fireballs = gameRepository.getFireballs(),
-                    selectedSkinIndex = gameRepository.getSelectedSkin()
+                    selectedSkinIndex = gameRepository.getSelectedSkin(),
+                    sound = gameRepository.getSound()
                 )
             }
         }
@@ -69,6 +71,7 @@ class GameViewModel(
         if (!state.value.isGameActive) return@launch
         if (!state.value.canActivateFireball) return@launch
         val newFireballs = state.value.fireballs - 1
+        SoundManager.playFire(state.value.sound)
         gameRepository.setFireballs(newFireballs)
         _state.update {
             it.copy(fireballs = newFireballs, fireballSeconds = GameConfig.FIREBALL_SECONDS)
@@ -78,6 +81,9 @@ class GameViewModel(
     private fun processSecondTick() = viewModelScope.launch {
         if (state.value.isGamePaused) return@launch
         if (!state.value.isGameActive) return@launch
+        if (state.value.fireballSeconds - 1 <= 0) {
+            SoundManager.playFire(0)
+        }
         _state.update {
             it.copy(
                 shieldSeconds = maxOf(it.shieldSeconds - 1, 0),
@@ -90,6 +96,7 @@ class GameViewModel(
         if (state.value.isGamePaused) return@launch
         if (!state.value.isGameActive) return@launch
         if (state.value.playerY > 0) return@launch
+        SoundManager.playJump(state.value.sound)
         _state.update { it.copy(isPlayerJumping = true) }
     }
 
@@ -108,7 +115,8 @@ class GameViewModel(
                 shields = it.shields,
                 fireballs = it.fireballs,
                 selectedSkinIndex = it.selectedSkinIndex,
-                isGamePaused = false
+                isGamePaused = false,
+                sound = gameRepository.getSound()
             )
         }
     }
@@ -219,6 +227,7 @@ class GameViewModel(
             }
         }
         if (collidedCoinX != null) {
+            SoundManager.playCoinPickup(state.value.sound)
             _state.update {
                 it.copy(
                     coinsX = it.coinsX.filter { x -> x != collidedCoinX },
@@ -229,6 +238,7 @@ class GameViewModel(
     }
 
     private suspend fun lose() {
+        SoundManager.playGameOver(state.value.sound)
         gameRepository.processScore(state.value.score.toInt())
         gameRepository.setCoins(gameRepository.getCoins() + state.value.coins)
         _state.update {

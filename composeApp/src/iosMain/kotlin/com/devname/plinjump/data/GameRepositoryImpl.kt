@@ -14,6 +14,8 @@ class GameRepositoryImpl : GameRepository {
         private const val FIREBALLS_KEY = "fireballs"
         private const val HIGH_SCORE_KEY = "high_score"
         private const val SKIN_KEY = "skin"
+        private const val SOUND_KEY = "sound"
+        private const val MUSIC_KEY = "music"
         private const val SELECTED_SKIN_KEY = "selected_skin"
     }
 
@@ -82,5 +84,25 @@ class GameRepositoryImpl : GameRepository {
     override suspend fun setSelectedSkin(index: Int) {
         SharedData.updateSelectedSkinIndex(index)
         userDefaults.setInteger(index.toLong(), forKey = SELECTED_SKIN_KEY)
+    }
+
+    override suspend fun getMusic(): Int {
+        return if (userDefaults.objectForKey(MUSIC_KEY) != null) {
+            userDefaults.integerForKey(MUSIC_KEY).toInt()
+        } else 5
+    }
+
+    override suspend fun setMusic(value: Int) {
+        userDefaults.setInteger(value.toLong(), forKey = MUSIC_KEY)
+    }
+
+    override suspend fun getSound(): Int {
+        return if (userDefaults.objectForKey(SOUND_KEY) != null) {
+            userDefaults.integerForKey(SOUND_KEY).toInt()
+        } else 5
+    }
+
+    override suspend fun setSound(value: Int) {
+        userDefaults.setInteger(value.toLong(), forKey = SOUND_KEY)
     }
 }
