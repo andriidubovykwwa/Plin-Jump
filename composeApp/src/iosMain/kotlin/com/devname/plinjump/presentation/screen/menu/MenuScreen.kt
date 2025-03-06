@@ -1,5 +1,11 @@
 package com.devname.plinjump.presentation.screen.menu
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
@@ -67,6 +74,7 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
     val sharedSelectedSkinIndex by SharedData.selectedSkinIndex.collectAsState(null)
     var isSettingsOpened by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
+        SoundManager.playFire(0)
         OrientationManager().orientation = OrientationManager.Orientation.ALL
     }
     LaunchedEffect(state.music) {
@@ -79,8 +87,20 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
         ).safeContentPadding(), contentAlignment = Alignment.Center
     ) {
         AdaptiveContainer(Modifier.fillMaxSize().align(Alignment.Center)) {
+            val infiniteTransition = rememberInfiniteTransition()
+            val yPosition by infiniteTransition.animateFloat(
+                initialValue = 0f,
+                targetValue = -70f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(
+                        durationMillis = 600,
+                        easing = LinearOutSlowInEasing
+                    ),
+                    repeatMode = RepeatMode.Reverse
+                )
+            )
             Image(
-                modifier = Modifier.height(200.dp),
+                modifier = Modifier.height(200.dp).offset(y = yPosition.dp),
                 painter = painterResource(Res.drawable.app_title),
                 contentDescription = stringResource(Res.string.app_name),
                 contentScale = ContentScale.FillHeight,
