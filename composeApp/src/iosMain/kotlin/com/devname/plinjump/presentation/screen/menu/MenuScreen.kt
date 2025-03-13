@@ -100,7 +100,7 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
                 )
             )
             Image(
-                modifier = Modifier.height(200.dp).offset(y = yPosition.dp),
+                modifier = Modifier.height(100.dp).offset(y = yPosition.dp),
                 painter = painterResource(Res.drawable.app_title),
                 contentDescription = stringResource(Res.string.app_name),
                 contentScale = ContentScale.FillHeight,
