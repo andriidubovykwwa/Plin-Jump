@@ -63,7 +63,7 @@ object SoundManager {
     fun playButtonClick(volume: Int) {
         if (volume == 0) return
         buttonClickPlayer?.let {
-            it.volume = 0.1f * volume * 2f
+            it.volume = 0.1f * volume * 1.5f
         }
         buttonClickPlayer?.play()
     }
@@ -82,7 +82,7 @@ object SoundManager {
             return
         }
         firePlayer?.let {
-            it.volume = 0.1f * volume * 3f
+            it.volume = 0.1f * volume * 1.5f
         }
         firePlayer?.play()
     }
