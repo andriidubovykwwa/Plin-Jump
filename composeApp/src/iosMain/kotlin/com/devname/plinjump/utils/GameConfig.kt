@@ -23,6 +23,15 @@ object GameConfig {
     const val SHIELD_SECONDS = 20
     const val FIREBALL_SECONDS = 10
 
+    // Daily quest
+    const val QUEST_1_GAMES = 1
+    const val QUEST_2_GAMES = 5
+    const val QUEST_3_SCORE = 250
+    const val QUEST_1_REWARD = 5
+    const val QUEST_2_REWARD = 30
+    const val QUEST_3_REWARD = 50
+
+
     enum class Skin(val res: DrawableResource, val price: Int) {
         BALL_1(Res.drawable.ball_1, 0),
         BALL_2(Res.drawable.ball_2, 50),

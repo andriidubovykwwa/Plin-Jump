@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.devname.plinjump.presentation.component.AdaptiveContainer
+import com.devname.plinjump.presentation.component.DailyQuestDialog
 import com.devname.plinjump.presentation.component.GameText
 import com.devname.plinjump.presentation.component.SettingsDialog
 import com.devname.plinjump.presentation.navigation.Screen
@@ -56,6 +58,8 @@ import plinjump.composeapp.generated.resources.app_name
 import plinjump.composeapp.generated.resources.app_title
 import plinjump.composeapp.generated.resources.ball
 import plinjump.composeapp.generated.resources.bg_menu
+import plinjump.composeapp.generated.resources.daily_quests
+import plinjump.composeapp.generated.resources.high_score
 import plinjump.composeapp.generated.resources.info
 import plinjump.composeapp.generated.resources.info_button
 import plinjump.composeapp.generated.resources.play_button
@@ -73,7 +77,9 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
     val sharedHighScore by SharedData.highScore.collectAsState(null)
     val sharedSelectedSkinIndex by SharedData.selectedSkinIndex.collectAsState(null)
     var isSettingsOpened by remember { mutableStateOf(false) }
+    var isDailyQuestsOpened by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
+        onEvent(MenuEvent.ProcessDailyDataReset)
         SoundManager.playFire(0)
         OrientationManager().orientation = OrientationManager.Orientation.ALL
     }
@@ -116,14 +122,40 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
             )
             val shape = RoundedCornerShape(10.dp)
             Column(
-                modifier = Modifier.background(Color(0xff441768), shape)
-                    .border(3.dp, Color.White, shape)
-                    .padding(15.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(5.dp)
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                GameText(text = "High Score", textAlign = TextAlign.Center, fontSize = 20.sp)
-                GameText(text = "${(sharedHighScore ?: state.highScore)}", fontSize = 20.sp)
+                Column(
+                    modifier = Modifier.background(Color(0xff441768), shape)
+                        .border(3.dp, Color.White, shape)
+                        .padding(15.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    GameText(
+                        text = stringResource(Res.string.high_score),
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp
+                    )
+                    GameText(text = "${(sharedHighScore ?: state.highScore)}", fontSize = 20.sp)
+                }
+                Box(
+                    Modifier.border(3.dp, Color(0xff55cb4f), shape)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xff0A743E),
+                                    Color(0xff3DA737),
+                                )
+                            ),
+                            shape
+                        )
+                        .clip(shape)
+                        .clickable { isDailyQuestsOpened = true }
+                        .padding(5.dp),
+                ) {
+                    GameText(text = stringResource(Res.string.daily_quests), fontSize = 16.sp)
+                }
             }
         }
         AdaptiveContainer(
@@ -184,6 +216,15 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
             onSetMusic = { onEvent(MenuEvent.SetMusic(it)) },
             onSetSound = { onEvent(MenuEvent.SetSound(it)) },
             onDismiss = { isSettingsOpened = false }
+        )
+    }
+    if (isDailyQuestsOpened) {
+        DailyQuestDialog(
+            playedDailyGames = state.playedDailyGames,
+            dailyRecord = state.dailyRecord,
+            onDismiss = { isDailyQuestsOpened = false },
+            claimed = state.claimedQuests,
+            onClaim = { onEvent(MenuEvent.ClaimQuest(it)) }
         )
     }
 }

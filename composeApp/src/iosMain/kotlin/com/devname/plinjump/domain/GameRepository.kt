@@ -17,4 +17,9 @@ interface GameRepository {
     suspend fun setMusic(value: Int)
     suspend fun getSound(): Int
     suspend fun setSound(value: Int)
+    suspend fun getDailyPlayedGames(): Int
+    suspend fun getDailyRecord(): Int
+    suspend fun setRewardReceived(index: Int)
+    suspend fun isRewardReceived(index: Int): Boolean
+    suspend fun processDailyDataReset()
 }

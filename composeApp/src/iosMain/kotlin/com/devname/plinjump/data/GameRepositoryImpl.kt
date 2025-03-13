@@ -3,6 +3,7 @@ package com.devname.plinjump.data
 import com.devname.plinjump.domain.GameRepository
 import com.devname.plinjump.presentation.screen.SharedData
 import com.devname.plinjump.utils.GameConfig
+import com.devname.plinjump.utils.getCurrentDayOfMonth
 import platform.Foundation.NSUserDefaults
 
 class GameRepositoryImpl : GameRepository {
@@ -17,6 +18,11 @@ class GameRepositoryImpl : GameRepository {
         private const val SOUND_KEY = "sound"
         private const val MUSIC_KEY = "music"
         private const val SELECTED_SKIN_KEY = "selected_skin"
+        private const val DAILY_PLAYED_GAMES_KEY = "daily_played_games"
+        private const val DAILY_RECORD_KEY = "daily_record"
+        private const val LAST_DAILY_RESET_DAY_KEY = "last_daily_reset_day_key"
+        private const val RECEIVE_DAILY_REWARD_KEY = "daily_reward_key"
+        const val NUMBER_OF_DAILY_REWARDS = 3
     }
 
     override suspend fun getCoins(): Int {
@@ -56,6 +62,7 @@ class GameRepositoryImpl : GameRepository {
     }
 
     override suspend fun processScore(value: Int) {
+        processScoreForDailyData(value)
         if (value <= getHighScore()) return
         SharedData.updateHighScore(value)
         userDefaults.setInteger(value.toLong(), forKey = HIGH_SCORE_KEY)
@@ -104,5 +111,54 @@ class GameRepositoryImpl : GameRepository {
 
     override suspend fun setSound(value: Int) {
         userDefaults.setInteger(value.toLong(), forKey = SOUND_KEY)
+    }
+
+    override suspend fun getDailyPlayedGames(): Int {
+        return if (userDefaults.objectForKey(DAILY_PLAYED_GAMES_KEY) != null) {
+            userDefaults.integerForKey(DAILY_PLAYED_GAMES_KEY).toInt()
+        } else 0
+    }
+
+    override suspend fun getDailyRecord(): Int {
+        return if (userDefaults.objectForKey(DAILY_RECORD_KEY) != null) {
+            userDefaults.integerForKey(DAILY_RECORD_KEY).toInt()
+        } else 0
+    }
+
+    override suspend fun setRewardReceived(index: Int) {
+        userDefaults.setBool(true, forKey = "${RECEIVE_DAILY_REWARD_KEY}_$index")
+    }
+
+    override suspend fun isRewardReceived(index: Int): Boolean {
+        val key = "${RECEIVE_DAILY_REWARD_KEY}_$index"
+        return if (userDefaults.objectForKey(key) != null) {
+            userDefaults.boolForKey(key)
+        } else false
+    }
+
+    override suspend fun processDailyDataReset() {
+        val currentDay = getCurrentDayOfMonth()
+        val lastDaily = getLastDailyResetDay()
+        if (currentDay == lastDaily) return
+        userDefaults.setInteger(currentDay.toLong(), forKey = LAST_DAILY_RESET_DAY_KEY)
+        userDefaults.setInteger(0, forKey = DAILY_PLAYED_GAMES_KEY)
+        userDefaults.setInteger(0, forKey = DAILY_RECORD_KEY)
+        repeat(NUMBER_OF_DAILY_REWARDS) {
+            userDefaults.setBool(false, forKey = "${RECEIVE_DAILY_REWARD_KEY}_$it")
+        }
+    }
+
+    private suspend fun processScoreForDailyData(score: Int) {
+        userDefaults.setInteger(getDailyPlayedGames() + 1L, forKey = DAILY_PLAYED_GAMES_KEY)
+        val prevDailyRecord = getDailyRecord()
+        if (score > prevDailyRecord) {
+            userDefaults.setInteger(score.toLong(), forKey = DAILY_RECORD_KEY)
+        }
+    }
+
+    private fun getLastDailyResetDay(): Int {
+        return if (userDefaults.objectForKey(LAST_DAILY_RESET_DAY_KEY) != null) {
+            userDefaults.integerForKey(LAST_DAILY_RESET_DAY_KEY).toInt()
+        } else 1
     }
 }

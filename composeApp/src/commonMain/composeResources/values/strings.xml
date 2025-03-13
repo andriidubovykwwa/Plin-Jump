@@ -23,4 +23,7 @@
     <string name="music">Music</string>
     <string name="sounds">Sounds</string>
     <string name="high_score">High Score</string>
+    <string name="claim">CLAIM</string>
+    <string name="claimed">CLAIMED</string>
+    <string name="daily_quests">Daily Quests</string>
 </resources>
