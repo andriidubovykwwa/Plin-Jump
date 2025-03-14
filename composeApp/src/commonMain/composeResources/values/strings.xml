@@ -26,4 +26,9 @@
     <string name="claim">CLAIM</string>
     <string name="claimed">CLAIMED</string>
     <string name="daily_quests">Daily Quests</string>
+    <string name="info_text_1">Your objective is to leap over obstacles and gather coins. As the game advances, the ball’s speed increases, making it more challenging to dodge obstacles.</string>
+    <string name="info_text_2">The coins you collect can be used to purchase one-time power-ups or ball skins. There are two types of power-ups: Shield and Fireball.</string>
+    <string name="info_text_3">Shield - shields the ball from collisions but breaks after the first impact.</string>
+    <string name="info_text_4">Fireball - enables the ball to destroy all obstacles for a limited duration.</string>
+    <string name="info_text_5">Time your jumps wisely, use power-ups strategically, and challenge yourself to see how far you can go!</string>
 </resources>

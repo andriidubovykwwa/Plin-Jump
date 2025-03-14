@@ -36,6 +36,11 @@ import plinjump.composeapp.generated.resources.bg_info
 import plinjump.composeapp.generated.resources.fireball
 import plinjump.composeapp.generated.resources.icon_back
 import plinjump.composeapp.generated.resources.info
+import plinjump.composeapp.generated.resources.info_text_1
+import plinjump.composeapp.generated.resources.info_text_2
+import plinjump.composeapp.generated.resources.info_text_3
+import plinjump.composeapp.generated.resources.info_text_4
+import plinjump.composeapp.generated.resources.info_text_5
 import plinjump.composeapp.generated.resources.shield
 
 @Composable
@@ -76,13 +81,13 @@ fun InfoScreen(navController: NavController, viewModel: InfoViewModel = koinView
             }
             item {
                 GameText(
-                    text = "Your goal is to jump over obstacles and collect coins. As the game progresses, the ball’s speed increases, making it harder to avoid obstacles.",
+                    text = stringResource(Res.string.info_text_1),
                     fontSize = 18.sp
                 )
             }
             item {
                 GameText(
-                    text = "Collected coins can be spent on one-time power-ups or ball skins. There are two types of power-ups: Shield and Fireball.",
+                    text = stringResource(Res.string.info_text_2),
                     fontSize = 18.sp
                 )
             }
@@ -96,7 +101,7 @@ fun InfoScreen(navController: NavController, viewModel: InfoViewModel = koinView
             }
             item {
                 GameText(
-                    text = "Shield - protects the ball from collisions but breaks upon the first impact.",
+                    text = stringResource(Res.string.info_text_3),
                     fontSize = 18.sp
                 )
             }
@@ -110,13 +115,13 @@ fun InfoScreen(navController: NavController, viewModel: InfoViewModel = koinView
             }
             item {
                 GameText(
-                    text = "Fireball - allows the ball to destroy all obstacles for a limited time",
+                    text = stringResource(Res.string.info_text_4),
                     fontSize = 18.sp
                 )
             }
             item {
                 GameText(
-                    text = "Time your jumps carefully, use power-ups wisely, and see how far you can go in this exciting challenge!",
+                    text = stringResource(Res.string.info_text_5),
                     fontSize = 18.sp
                 )
             }
