@@ -12,11 +12,15 @@ import androidx.compose.material.SliderDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.devname.plinjump.utils.dialogGradientColor1
+import com.devname.plinjump.utils.dialogGradientColor2
+import com.devname.plinjump.utils.settingsSliderColor
 import org.jetbrains.compose.resources.stringResource
 import plinjump.composeapp.generated.resources.Res
 import plinjump.composeapp.generated.resources.music
@@ -35,7 +39,14 @@ fun SettingsDialog(
     Dialog(onDismissRequest = onDismiss) {
         val dialogShape = RoundedCornerShape(15.dp)
         Column(
-            modifier.background(Color(0x99000000), dialogShape)
+            modifier.background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        dialogGradientColor1,
+                        dialogGradientColor2,
+                    )
+                ), dialogShape
+            )
                 .border(2.dp, Color.White, dialogShape).padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -56,8 +67,8 @@ fun SettingsDialog(
                 valueRange = 0f..10f,
                 steps = 9,
                 colors = SliderDefaults.colors(
-                    thumbColor = Color(0xff21CF46),
-                    activeTrackColor = Color(0xff21CF46),
+                    thumbColor = settingsSliderColor,
+                    activeTrackColor = settingsSliderColor,
                     inactiveTrackColor = Color(0xff282844),
                     activeTickColor = Color.Transparent,
                     inactiveTickColor = Color.Transparent
@@ -75,8 +86,8 @@ fun SettingsDialog(
                 valueRange = 0f..10f,
                 steps = 9,
                 colors = SliderDefaults.colors(
-                    thumbColor = Color(0xff21CF46),
-                    activeTrackColor = Color(0xff21CF46),
+                    thumbColor = settingsSliderColor,
+                    activeTrackColor = settingsSliderColor,
                     inactiveTrackColor = Color(0xff282844),
                     activeTickColor = Color.Transparent,
                     inactiveTickColor = Color.Transparent

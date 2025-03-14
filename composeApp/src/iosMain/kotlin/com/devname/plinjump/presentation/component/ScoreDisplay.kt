@@ -14,26 +14,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.devname.plinjump.utils.scoreDisplayGradientColor1
+import com.devname.plinjump.utils.scoreDisplayGradientColor2
 
 @Composable
 fun ScoreDisplay(modifier: Modifier = Modifier, score: Int) {
-    val shape = RoundedCornerShape(20.dp)
+    val shape = RoundedCornerShape(15.dp)
     Box(
         modifier = modifier
-            .border(3.dp, Color(0xffc250c8), shape)
+            .border(3.dp, Color.White, shape)
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xff740A65),
-                        Color(0xffA737A7),
+                        scoreDisplayGradientColor1,
+                        scoreDisplayGradientColor2
                     )
                 ),
                 shape
             )
             .clip(shape)
-            .padding(8.dp),
+            .padding(vertical = 8.dp, horizontal = 20.dp),
         contentAlignment = Alignment.Center
     ) {
-        GameText(text = score.toString(), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        GameText(text = score.toString(), fontSize = 24.sp, fontWeight = FontWeight.Bold)
     }
 }

@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.Font
 import plinjump.composeapp.generated.resources.Res
-import plinjump.composeapp.generated.resources.kronaone_regular
+import plinjump.composeapp.generated.resources.londrinasolide_regular
 
 @Composable
 fun GameText(
@@ -37,7 +37,7 @@ fun GameText(
             style = LocalTextStyle.current.copy(drawStyle = Stroke(8f)),
             fontSize = fontSize,
             fontWeight = fontWeight,
-            fontFamily = FontFamily(Font(Res.font.kronaone_regular)),
+            fontFamily = FontFamily(Font(Res.font.londrinasolide_regular)),
             textAlign = textAlign
         )
 
@@ -47,7 +47,7 @@ fun GameText(
             fontSize = fontSize,
             color = color,
             fontWeight = fontWeight,
-            fontFamily = FontFamily(Font(Res.font.kronaone_regular)),
+            fontFamily = FontFamily(Font(Res.font.londrinasolide_regular)),
             textAlign = textAlign
         )
     }

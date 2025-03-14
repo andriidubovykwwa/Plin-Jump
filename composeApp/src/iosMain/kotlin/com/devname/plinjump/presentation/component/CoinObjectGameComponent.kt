@@ -28,7 +28,7 @@ fun CoinObjectGameComponent(
                 x = (gameSize.width * coinX).toInt(),
                 y = (gameSize.height - blockSize).toInt()
             )
-        }.scale(0.75f),
+        }.scale(0.85f),
         painter = painterResource(Res.drawable.coin),
         contentDescription = stringResource(Res.string.coin),
         contentScale = ContentScale.FillBounds

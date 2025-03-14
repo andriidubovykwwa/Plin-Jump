@@ -21,6 +21,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.devname.plinjump.utils.availableToBuyGradientColor1
+import com.devname.plinjump.utils.availableToBuyGradientColor2
+import com.devname.plinjump.utils.selectGradientColor1
+import com.devname.plinjump.utils.selectGradientColor2
+import com.devname.plinjump.utils.shopCardColor
+import com.devname.plinjump.utils.unavailableToBuyGradientColor1
+import com.devname.plinjump.utils.unavailableToBuyGradientColor2
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import plinjump.composeapp.generated.resources.Res
@@ -40,14 +47,9 @@ fun DailyQuestComponent(
 ) {
     val shape = RoundedCornerShape(20.dp)
     Row(
-        modifier.border(5.dp, Color(0xffb03dd9), shape)
+        modifier.border(4.dp, Color.White, shape)
             .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xff411F98),
-                        Color(0xff842AA2),
-                    )
-                ),
+                shopCardColor,
                 shape
             )
             .padding(5.dp),
@@ -88,7 +90,7 @@ fun DailyQuestComponent(
                         fontWeight = FontWeight.Bold
                     )
                     Image(
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(20.dp),
                         painter = painterResource(Res.drawable.coin),
                         contentDescription = stringResource(Res.string.coin),
                         contentScale = ContentScale.FillBounds
@@ -98,28 +100,26 @@ fun DailyQuestComponent(
             val brush = if (claimed) {
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xff0a5174),
-                        Color(0xff3883a8),
+                        selectGradientColor1,
+                        selectGradientColor2,
                     )
                 )
             } else if (currentProgress >= targetProgress) {
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xff0A743E),
-                        Color(0xff3DA737),
+                        availableToBuyGradientColor1,
+                        availableToBuyGradientColor2,
                     )
                 )
             } else {
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xff740A0A),
-                        Color(0xffA73737),
+                        unavailableToBuyGradientColor1,
+                        unavailableToBuyGradientColor2
                     )
                 )
             }
-            val borderColor = if (claimed) Color(0xff4ea1ca)
-            else if (currentProgress >= targetProgress) Color(0xff55cb4f)
-            else Color(0xffea191a)
+            val borderColor = Color.White
             Box(
                 Modifier.border(3.dp, borderColor, shape)
                     .background(

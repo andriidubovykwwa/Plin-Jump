@@ -19,6 +19,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.devname.plinjump.utils.coinDisplayGradientColor1
+import com.devname.plinjump.utils.coinDisplayGradientColor2
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import plinjump.composeapp.generated.resources.Res
@@ -26,30 +28,30 @@ import plinjump.composeapp.generated.resources.coin
 
 @Composable
 fun CoinDisplay(modifier: Modifier = Modifier, coins: Int) {
-    val shape = RoundedCornerShape(20.dp)
+    val shape = RoundedCornerShape(15.dp)
     Box(
         modifier = modifier
-            .border(3.dp, Color(0xff61add0), shape)
+            .border(3.dp, Color.White, shape)
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xff0A5A74),
-                        Color(0xff3777A7),
+                        coinDisplayGradientColor1,
+                        coinDisplayGradientColor2
                     )
                 ),
                 shape
             )
             .clip(shape)
-            .padding(8.dp),
+            .padding(vertical = 8.dp, horizontal = 20.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(3.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            GameText(text = coins.toString(), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            GameText(text = coins.toString(), fontSize = 24.sp, fontWeight = FontWeight.Bold)
             Image(
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(25.dp),
                 painter = painterResource(Res.drawable.coin),
                 contentDescription = stringResource(Res.string.coin),
                 contentScale = ContentScale.FillBounds

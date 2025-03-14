@@ -12,10 +12,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.devname.plinjump.utils.GameConfig
+import com.devname.plinjump.utils.dialogGradientColor1
+import com.devname.plinjump.utils.dialogGradientColor2
 
 @Composable
 fun DailyQuestDialog(
@@ -29,7 +32,14 @@ fun DailyQuestDialog(
     Dialog(onDismissRequest = onDismiss) {
         val dialogShape = RoundedCornerShape(15.dp)
         Box(
-            modifier.background(Color(0x99000000), dialogShape)
+            modifier.background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        dialogGradientColor1,
+                        dialogGradientColor2,
+                    )
+                ), dialogShape
+            )
                 .widthIn(min = 300.dp)
                 .heightIn(min = 200.dp)
                 .border(2.dp, Color.White, dialogShape)

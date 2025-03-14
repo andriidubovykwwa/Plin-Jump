@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.devname.plinjump.utils.dialogGradientColor1
+import com.devname.plinjump.utils.dialogGradientColor2
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import plinjump.composeapp.generated.resources.Res
@@ -43,7 +44,14 @@ fun PauseDialog(
     Dialog(onDismissRequest = onDismiss) {
         val dialogShape = RoundedCornerShape(15.dp)
         Column(
-            modifier.background(Color(0x99000000), dialogShape)
+            modifier.background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        dialogGradientColor1,
+                        dialogGradientColor2,
+                    )
+                ), dialogShape
+            )
                 .border(2.dp, Color.White, dialogShape).padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -57,55 +65,21 @@ fun PauseDialog(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                val shape = RoundedCornerShape(20.dp)
-                Box(
-                    modifier = modifier
-                        .border(3.dp, Color(0xff71dd73), shape)
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0xff0A743E),
-                                    Color(0xff3DA737),
-                                )
-                            ),
-                            shape
-                        )
-                        .clip(shape)
-                        .clickable { onBackHome() }
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        modifier = Modifier.size(45.dp),
-                        painter = painterResource(Res.drawable.icon_home),
-                        contentDescription = stringResource(Res.string.home),
-                        contentScale = ContentScale.FillBounds
-                    )
-                }
-                Box(
-                    modifier = modifier
-                        .border(3.dp, Color(0xff71dd73), shape)
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0xff0A743E),
-                                    Color(0xff3DA737),
-                                )
-                            ),
-                            shape
-                        )
-                        .clip(shape)
-                        .clickable { onRestart() }
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        modifier = Modifier.size(45.dp),
-                        painter = painterResource(Res.drawable.icon_restart),
-                        contentDescription = stringResource(Res.string.restart),
-                        contentScale = ContentScale.FillBounds
-                    )
-                }
+                val shape = RoundedCornerShape(18.dp)
+                Image(
+                    modifier = Modifier.size(60.dp).clip(shape)
+                        .clickable { onBackHome() },
+                    painter = painterResource(Res.drawable.icon_home),
+                    contentDescription = stringResource(Res.string.home),
+                    contentScale = ContentScale.FillBounds
+                )
+                Image(
+                    modifier = Modifier.size(60.dp).clip(shape)
+                        .clickable { onRestart() },
+                    painter = painterResource(Res.drawable.icon_restart),
+                    contentDescription = stringResource(Res.string.restart),
+                    contentScale = ContentScale.FillBounds
+                )
             }
         }
     }

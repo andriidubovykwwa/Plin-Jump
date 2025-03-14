@@ -22,9 +22,10 @@
     <string name="selected">SELECTED</string>
     <string name="music">Music</string>
     <string name="sounds">Sounds</string>
-    <string name="high_score">High Score</string>
+    <string name="record">RECORD</string>
     <string name="claim">CLAIM</string>
     <string name="claimed">CLAIMED</string>
+    <string name="available">AVAILABLE</string>
     <string name="daily_quests">Daily Quests</string>
     <string name="info_text_1">Your objective is to leap over obstacles and gather coins. As the game advances, the ball’s speed increases, making it more challenging to dodge obstacles.</string>
     <string name="info_text_2">The coins you collect can be used to purchase one-time power-ups or ball skins. There are two types of power-ups: Shield and Fireball.</string>

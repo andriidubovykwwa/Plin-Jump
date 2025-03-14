@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -123,7 +123,8 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
         // UI box
         Box(Modifier.fillMaxSize().safeContentPadding()) {
             Image(
-                modifier = Modifier.align(Alignment.TopStart).size(30.dp)
+                modifier = Modifier.align(Alignment.TopStart).size(45.dp)
+                    .clip(RoundedCornerShape(15.dp))
                     .clickable {
                         SoundManager.playButtonClick(state.sound)
                         onEvent(GameEvent.TogglePause)
@@ -137,11 +138,12 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                ScoreDisplay(Modifier.widthIn(min = 80.dp), score = state.score.toInt())
-                CoinDisplay(Modifier.widthIn(min = 80.dp), coins = state.coins)
+                ScoreDisplay(Modifier.widthIn(min = 120.dp), score = state.score.toInt())
+                CoinDisplay(Modifier.widthIn(min = 120.dp), coins = state.coins)
             }
             BonusComponent(
                 Modifier.align(Alignment.TopCenter),
+                imgHeight = 40.dp,
                 onActivateShield = {
                     SoundManager.playButtonClick(state.sound)
                     onEvent(GameEvent.ActivateShield)
@@ -172,7 +174,8 @@ fun GameScreen(navController: NavController, viewModel: GameViewModel = koinView
                 )
             } else {
                 Image(
-                    modifier = Modifier.align(Alignment.Center).size(100.dp).clip(CircleShape)
+                    modifier = Modifier.align(Alignment.Center).size(100.dp)
+                        .clip(RoundedCornerShape(35.dp))
                         .clickable {
                             SoundManager.playButtonClick(state.sound)
                             onEvent(GameEvent.StartGame)

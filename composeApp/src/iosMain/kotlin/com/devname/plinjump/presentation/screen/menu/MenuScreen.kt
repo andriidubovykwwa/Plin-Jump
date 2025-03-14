@@ -13,13 +13,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +50,10 @@ import com.devname.plinjump.presentation.screen.menu.view_model.MenuViewModel
 import com.devname.plinjump.utils.GameConfig
 import com.devname.plinjump.utils.OrientationManager
 import com.devname.plinjump.utils.SoundManager
+import com.devname.plinjump.utils.availableToBuyGradientColor1
+import com.devname.plinjump.utils.availableToBuyGradientColor2
+import com.devname.plinjump.utils.dialogGradientColor1
+import com.devname.plinjump.utils.dialogGradientColor2
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -59,10 +63,10 @@ import plinjump.composeapp.generated.resources.app_title
 import plinjump.composeapp.generated.resources.ball
 import plinjump.composeapp.generated.resources.bg_menu
 import plinjump.composeapp.generated.resources.daily_quests
-import plinjump.composeapp.generated.resources.high_score
 import plinjump.composeapp.generated.resources.info
 import plinjump.composeapp.generated.resources.info_button
 import plinjump.composeapp.generated.resources.play_button
+import plinjump.composeapp.generated.resources.record
 import plinjump.composeapp.generated.resources.round_button_bg
 import plinjump.composeapp.generated.resources.settings
 import plinjump.composeapp.generated.resources.settings_button
@@ -112,7 +116,7 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
                 contentScale = ContentScale.FillHeight,
             )
             Image(
-                modifier = Modifier.size(150.dp).clip(CircleShape).clickable {
+                modifier = Modifier.size(150.dp).clip(RoundedCornerShape(50.dp)).clickable {
                     SoundManager.playButtonClick(state.sound)
                     navController.navigate(Screen.Game)
                 },
@@ -122,90 +126,97 @@ fun MenuScreen(navController: NavController, viewModel: MenuViewModel = koinView
             )
             val shape = RoundedCornerShape(10.dp)
             Column(
-                verticalArrangement = Arrangement.spacedBy(5.dp),
+                verticalArrangement = Arrangement.spacedBy(15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        modifier = Modifier.size(60.dp).clip(RoundedCornerShape(15.dp)).clickable {
+                            SoundManager.playButtonClick(state.sound)
+                            isSettingsOpened = true
+                        },
+                        painter = painterResource(Res.drawable.settings_button),
+                        contentDescription = stringResource(Res.string.settings),
+                        contentScale = ContentScale.FillBounds,
+                    )
+                    Image(
+                        modifier = Modifier.size(60.dp).clip(RoundedCornerShape(15.dp)).clickable {
+                            SoundManager.playButtonClick(state.sound)
+                            navController.navigate(Screen.Shop)
+                        },
+                        painter = painterResource(Res.drawable.shop_button),
+                        contentDescription = stringResource(Res.string.shop),
+                        contentScale = ContentScale.FillBounds,
+                    )
+                    Box(
+                        modifier = Modifier.size(60.dp).paint(
+                            painter = painterResource(Res.drawable.round_button_bg),
+                            contentScale = ContentScale.FillBounds
+                        ).clip(RoundedCornerShape(15.dp)).clickable {
+                            SoundManager.playButtonClick(state.sound)
+                            navController.navigate(Screen.Skins)
+                        },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val skinIndex = sharedSelectedSkinIndex ?: state.selectedSkinIndex
+                        Image(
+                            modifier = Modifier.size(42.dp),
+                            painter = painterResource(GameConfig.Skin.entries[skinIndex].res),
+                            contentDescription = stringResource(Res.string.ball),
+                            contentScale = ContentScale.FillBounds,
+                        )
+                    }
+                    Image(
+                        modifier = Modifier.size(60.dp).clip(RoundedCornerShape(15.dp)).clickable {
+                            SoundManager.playButtonClick(state.sound)
+                            navController.navigate(Screen.Info)
+                        },
+                        painter = painterResource(Res.drawable.info_button),
+                        contentDescription = stringResource(Res.string.info),
+                        contentScale = ContentScale.FillBounds,
+                    )
+                }
                 Column(
-                    modifier = Modifier.background(Color(0xff441768), shape)
+                    modifier = Modifier.background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                dialogGradientColor1,
+                                dialogGradientColor2,
+                            )
+                        ), shape
+                    )
                         .border(3.dp, Color.White, shape)
-                        .padding(15.dp),
+                        .padding(vertical = 15.dp, horizontal = 30.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     GameText(
-                        text = stringResource(Res.string.high_score),
+                        text = stringResource(Res.string.record),
                         textAlign = TextAlign.Center,
                         fontSize = 20.sp
                     )
                     GameText(text = "${(sharedHighScore ?: state.highScore)}", fontSize = 20.sp)
                 }
                 Box(
-                    Modifier.border(3.dp, Color(0xff55cb4f), shape)
+                    Modifier.border(3.dp, Color.White, shape)
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    Color(0xff0A743E),
-                                    Color(0xff3DA737),
+                                    availableToBuyGradientColor1,
+                                    availableToBuyGradientColor2,
                                 )
                             ),
                             shape
                         )
                         .clip(shape)
                         .clickable { isDailyQuestsOpened = true }
-                        .padding(5.dp),
+                        .padding(10.dp),
                 ) {
-                    GameText(text = stringResource(Res.string.daily_quests), fontSize = 16.sp)
+                    GameText(text = stringResource(Res.string.daily_quests), fontSize = 20.sp)
                 }
-            }
-        }
-        AdaptiveContainer(
-            Modifier.align(Alignment.TopEnd),
-            space = 5.dp
-        ) {
-            Image(
-                modifier = Modifier.size(40.dp).clip(CircleShape).clickable {
-                    SoundManager.playButtonClick(state.sound)
-                    isSettingsOpened = true
-                },
-                painter = painterResource(Res.drawable.settings_button),
-                contentDescription = stringResource(Res.string.settings),
-                contentScale = ContentScale.FillBounds,
-            )
-            Image(
-                modifier = Modifier.size(40.dp).clip(CircleShape).clickable {
-                    SoundManager.playButtonClick(state.sound)
-                    navController.navigate(Screen.Info)
-                },
-                painter = painterResource(Res.drawable.info_button),
-                contentDescription = stringResource(Res.string.info),
-                contentScale = ContentScale.FillBounds,
-            )
-            Image(
-                modifier = Modifier.size(40.dp).clip(CircleShape).clickable {
-                    SoundManager.playButtonClick(state.sound)
-                    navController.navigate(Screen.Shop)
-                },
-                painter = painterResource(Res.drawable.shop_button),
-                contentDescription = stringResource(Res.string.shop),
-                contentScale = ContentScale.FillBounds,
-            )
-            Box(
-                modifier = Modifier.size(40.dp).paint(
-                    painter = painterResource(Res.drawable.round_button_bg),
-                    contentScale = ContentScale.FillBounds
-                ).clip(CircleShape).clickable {
-                    SoundManager.playButtonClick(state.sound)
-                    navController.navigate(Screen.Skins)
-                },
-                contentAlignment = Alignment.Center
-            ) {
-                val skinIndex = sharedSelectedSkinIndex ?: state.selectedSkinIndex
-                Image(
-                    modifier = Modifier.size(25.dp),
-                    painter = painterResource(GameConfig.Skin.entries[skinIndex].res),
-                    contentDescription = stringResource(Res.string.ball),
-                    contentScale = ContentScale.FillBounds,
-                )
             }
         }
     }
